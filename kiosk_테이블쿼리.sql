@@ -1,9 +1,9 @@
-DROP TABLE "Menu";
+DROP TABLE Menu;
 
 CREATE TABLE Menu (
 	menu_id		number				NOT NULL,
 	menu_name	varchar2(100)		NOT NULL,
-	exp			varchar2(200)		NOT NULL,
+	menu_info			varchar2(200)		NOT NULL,
 	menu_price	number				NOT NULL,
 	category	varchar2(100)		NULL,
 	image		varchar2(200)		NULL
