@@ -6,7 +6,7 @@ db_name_list = []
 db_exp_list = []
 db_img_list = []
 
-url = "https://ediya.com/inc/ajax_brand.php"
+url = "https://ediya.com/contents/drink.html?chked_val=12,&skeyword=#c"
 params = {
     "gubun": "menu_more",
     "product_cate": "7",
