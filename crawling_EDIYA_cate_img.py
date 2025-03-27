@@ -79,7 +79,7 @@ for c in cate_list:
         # 메뉴 설명
         detail = soup.find_all("div", class_="detail_txt")
         for b in range(len(detail)):
-            detail[b] = str(detail[b].text).replace('\\u200b','').replace('\\xa0', '')
+            detail[b] = str(detail[b].text).replace('\u200b','').replace('\xa0', '').replace('\r\n', '')
             db_exp_list.append(detail[b])
         
         # print(detail, '\n')
