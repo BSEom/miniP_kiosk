@@ -40,23 +40,38 @@ class MainWindow(QMainWindow):
 
     # 화면의 인풋위젯 데이터 초기화함수
     def clearInput(self):
-        self.input_std_name.clear()
-        self.input_std_mobile.clear()
-        self.input_std_regyear.clear()
+        self.input_menu_id.clear()
+        self.input_menu_name.clear()
+        self.input_menu_info.clear()
+        self.input_menu_price.clear()
+        self.combo_menu_category.setCurrentIndex(0)
 
     # 테이블 위젯 더블클릭 시그널 처리 함수
-    def tblStudentDoubleClick(self):
-        selected = self.tblStudent.currentRow() # 현재 선택된 row값을 반환하는 함수
-        std_id = self.tblStudent.item(selected, 0).text()
-        std_name = self.tblStudent.item(selected, 1).text()
-        std_mobile = self.tblStudent.item(selected, 2).text()
-        std_regyear = self.tblStudent.item(selected, 3).text()
-        # QMessageBox.about(self,'더블클릭',f'{std_id}, {std_name}, {std_mobile}, {std_regyear}')  
-        # 더블클릭하면 학생정보 입력창에 올라감
-        self.input_std_id.setText(std_id)
-        self.input_std_name.setText(std_name)
-        self.input_std_mobile.setText(std_mobile)
-        self.input_std_regyear.setText(std_regyear)  
+def tblStudentDoubleClick(self):
+    selected = self.tblMenu.currentRow()  # 현재 선택된 행의 인덱스 가져오기
+    
+    # 선택된 셀의 값 가져오기
+    menu_id = self.tblMenu.item(selected, 0).text()
+    menu_name = self.tblMenu.item(selected, 1).text()
+    menu_info = self.tblMenu.item(selected, 2).text()
+    menu_price = self.tblMenu.item(selected, 3).text()
+    menu_category = self.tblMenu.item(selected, 4).text()  # 크롤링한 데이터에서 가져온 카테고리
+
+    # 가져온 데이터를 입력창에 반영
+    self.input_menu_id.setText(menu_id)
+    self.input_menu_name.setText(menu_name)
+    self.input_menu_info.setText(menu_info)
+    self.input_menu_price.setText(menu_price)
+
+    # ✅ 크롤링된 카테고리가 QComboBox에 있으면 설정
+    categories = [self.combo_menu_category.itemText(i) for i in range(self.combo_menu_category.count())]
+
+    if menu_category in categories:
+        self.combo_menu_category.setCurrentText(menu_category)
+    else:
+        print(f"⚠ '{menu_category}' 값이 콤보박스에 없음! 기본값으로 설정")
+        self.combo_menu_category.setCurrentIndex(0)  # 기본값으로 설정
+  
 
         # 상태바에 메시지 추가
         self.statusbar.showMessage(f'{basic_msg} | 수정모드')
