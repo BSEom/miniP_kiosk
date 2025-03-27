@@ -10,6 +10,7 @@ db_exp_list = []
 db_img_list = []
 db_categori_list = []
 
+# 12 = 커피, 13 = 음료, 14 = 차, 15 = 플렛치노, 16 = 쉐이크&에이드
 cate_list = ['12,', '13,', '14,', '15,', '16,'] 
 cate = ''
 
@@ -17,7 +18,7 @@ url = "https://ediya.com/inc/ajax_brand.php"
 params = {
     "gubun": "menu_more",
     "product_cate": "7",
-    "chked_val": "12,",
+    "chked_val": "12,",  # 카테고리
     "skeyword": "",
     "page": 1  # 페이지 번호
 }
