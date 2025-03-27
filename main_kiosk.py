@@ -3,7 +3,8 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5 import QtWidgets, QtGui, uic
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QUrl
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
 
 sid = 'XE'
 host = '210.119.14.76'
@@ -19,7 +20,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initUI()
-        # self.loadData()
 
     def initUI(self):
         uic.loadUi('./kiosk.ui', self)
@@ -41,171 +41,57 @@ class MainWindow(QMainWindow):
         self.window_2 = menuWindow() 
         self.window_2.show()
 
-    # def loadData(self):
-    #     # DB연결
-    #     conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
-    #     cursor = conn.cursor()
-
-    #     query = 'SELECT * FROM menu'
-    #     cursor.execute(query)
-
-    #     # 불러온 데이터 처리
-    #     for i, (menu_id, menu_name, exp, menu_price, category, image) in enumerate(cursor, start=1):
-    #         print(menu_id, menu_name, exp, menu_price, category, image)
-
-    #     cursor.close()
-    #     conn.close()
-
+# 사용자 메뉴창
 class menuWindow(QMainWindow):
     def __init__(self):
         super(menuWindow, self).__init__()
+        self.lst_menu = []  # DB에서 불러온 데이터를 저장할 리스트
+        # self.page_size = 9  # 한 페이지에 표시할 개수 (3x3)
+        # self.current_page = 0  # 현재 페이지 번호
+        self.popular_image = []
         self.initUI()
-        # self.setupUi(self)  # UI 초기화
-        # self.setWindowTitle("Cafe Kiosk")
-        # self.setWindowIcon(QIcon('./coffee-cup.png'))
+        self.loadData()  # DB에서 데이터 로드
 
     def initUI(self):
         uic.loadUi('./menu.ui', self)
-        # self.setWindowTitle('Cafe Kiosk')
-        # self.setWindowIcon(QIcon('./coffe-cup.png'))
-        
-        # 인기기탭 메뉴 이미지 삽입=======================================
+        self.setWindowTitle('Cafe Kiosk')
+        self.setWindowIcon(QIcon('./coffee-cup.png'))
+
+    def menuTable(self, popular_image):
         popular_buttons = [
             self.popular1, self.popular2, self.popular3,
             self.popular4, self.popular5, self.popular6,
             self.popular7, self.popular8, self.popular9,
         ]
 
-        popular_image = [
-            "./mainImage.jpg"
-        ]
-
         # 반복문으로 버튼에 아이콘과 크기 설정
+        # print(popular_image)
         for button, image_path in zip(popular_buttons, popular_image):
-            button.setIcon(QIcon(image_path))
+            print(image_path)
+            button.setIcon(QIcon("https://ediya.com/files/menu/IMG_1647320805422.png"))
+            # button.setIcon(QIcon(image_path))
             button.setIconSize(QSize(100, 100))
 
-        # 시즌탭 메뉴 이미지 삽입=======================================
-        season_buttons = [
-            self.season1, self.season2, self.season3,
-            self.season4, self.season5, self.season6,
-            self.season7, self.season8, self.season9
-        ]
 
-        season_image = [
-            "./mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
-        ]
+    def loadData(self):
+        # DB연결
+        print("data로드완료")
+        conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
+        cursor = conn.cursor()
 
-        # 반복문으로 버튼에 아이콘과 크기 설정
-        for button, image_path in zip(season_buttons, season_image):
-            button.setIcon(QIcon(image_path))
-            button.setIconSize(QSize(100, 100))
-        
+        query = 'SELECT menu_name, menu_info, menu_price, image FROM menu'
+        cursor.execute(query)
 
-        # 커피탭 메뉴 이미지 삽입=======================================
-        coffee_buttons = [
-            self.coffee1, self.coffee2, self.coffee3,
-            self.coffee4, self.coffee5, self.coffee6,
-            self.coffee7, self.coffee8, self.coffee9
-        ]
+        for v in cursor:
+            self.popular_image.append(v[3])
+        # print(self.popular_image)
 
-        coffee_image = [
-            "./mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
-        ]
+        self.menuTable(self.popular_image) 
 
-        # 반복문으로 버튼에 아이콘과 크기 설정
-        for button, image_path in zip(coffee_buttons, coffee_image):
-            button.setIcon(QIcon(image_path))
-            button.setIconSize(QSize(100, 100))
+        cursor.close()
+        conn.close()
 
-        # 논커피 메뉴 이미지 삽입=======================================
-        n_coffee_buttons = [
-            self.n_coffee1, self.n_coffee2, self.n_coffee3,
-            self.n_coffee4, self.n_coffee5, self.n_coffee6,
-            self.n_coffee7, self.n_coffee8, self.n_coffee9
-        ]
-
-        n_coffee_image = [
-            "./mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
-        ]
-
-        # 반복문으로 버튼에 아이콘과 크기 설정
-        for button, image_path in zip(n_coffee_buttons, n_coffee_image):
-            button.setIcon(QIcon(image_path))
-            button.setIconSize(QSize(100, 100))
-
-        # 스무디 메뉴 이미지 삽입=======================================
-        smoothie_buttons = [
-            self.smoothie1, self.smoothie2, self.smoothie3,
-            self.smoothie4, self.smoothie5, self.smoothie6,
-            self.smoothie7, self.smoothie8, self.smoothie9
-        ]
-
-        smoothie_image = [
-            "./mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
-        ]
-
-        # 반복문으로 버튼에 아이콘과 크기 설정
-        for button, image_path in zip(smoothie_buttons, smoothie_image):
-            button.setIcon(QIcon(image_path))
-            button.setIconSize(QSize(100, 100))
-
-        # 에이드 메뉴 이미지 삽입=======================================
-        ade_buttons = [
-            self.ade1, self.ade2, self.ade3,
-            self.ade4, self.ade5, self.ade6,
-            self.ade7, self.ade8, self.ade9
-        ]
-
-        ade_image = [
-            "./mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            # "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
-        ]
-
-        # 반복문으로 버튼에 아이콘과 크기 설정
-        for button, image_path in zip(ade_buttons, ade_image):
-            button.setIcon(QIcon(image_path))
-            button.setIconSize(QSize(100, 100))
-
+    
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
