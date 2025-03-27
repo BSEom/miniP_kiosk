@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>btn_check</class>
+ <widget class="QMainWindow" name="btn_check">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
-    <height>580</height>
+    <width>1095</width>
+    <height>828</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>330</y>
+      <x>800</x>
+      <y>520</y>
       <width>251</width>
       <height>201</height>
      </rect>
@@ -50,8 +50,8 @@
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>0</y>
+      <x>800</x>
+      <y>40</y>
       <width>251</width>
       <height>321</height>
      </rect>
@@ -195,11 +195,60 @@
    <widget class="QListView" name="tblMenu">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>501</width>
-      <height>541</height>
+      <x>10</x>
+      <y>40</y>
+      <width>751</width>
+      <height>401</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QListView" name="tblMenu2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>490</y>
+      <width>751</width>
+      <height>271</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>조회 페이지</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>460</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>상태 페이지</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>370</y>
+      <width>231</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>조회</string>
     </property>
    </widget>
   </widget>
@@ -208,8 +257,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>794</width>
-     <height>21</height>
+     <width>1095</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>
