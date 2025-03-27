@@ -86,12 +86,22 @@
        </item>
        <item>
         <property name="text">
-         <string>스무디</string>
+         <string>음료</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>에이드</string>
+         <string>차</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>플렛치노</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>쉐이크&amp;에이드</string>
         </property>
        </item>
       </widget>
