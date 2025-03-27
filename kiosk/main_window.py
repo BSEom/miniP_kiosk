@@ -4,7 +4,7 @@ from PyQt5 import uic
 from menu_window import menuWindow
 from manager_window import managerWindow
 
-main_form = uic.loadUiType("D:/project/miniP_kiosk/ui/kiosk.ui")[0]
+main_form = uic.loadUiType("ui/kiosk.ui")[0]
 
 # 시작, 관리자 선택창
 class mainWindow(QMainWindow, main_form):

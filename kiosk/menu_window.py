@@ -9,7 +9,7 @@ import cx_Oracle as oci
 menu_form = uic.loadUiType("ui/menu.ui")[0]
 
 sid = 'XE'
-host = '210.119.14.76' 
+host = 'localhost' 
 port = 1521
 username = 'kiosk' 
 password = '12345'
@@ -72,13 +72,13 @@ class menuWindow(QMainWindow, menu_form):
             button.setFixedSize(200, 150)
 
             # 이미지 설정
-            response = requests.get(image_url)
-            if response.status_code == 200:
-                pixmap = QPixmap()
-                pixmap.loadFromData(response.content)
-                resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                button.setIcon(QIcon(resized_pixmap))
-                button.setIconSize(QSize(100, 100))
+            # response = requests.get(image_url)
+            # if response.status_code == 200:
+            #     pixmap = QPixmap()
+            #     pixmap.loadFromData(response.content)
+            #     resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            #     button.setIcon(QIcon(resized_pixmap))
+            #     button.setIconSize(QSize(100, 100))
 
             # 텍스트 설정
             button.setText(text)
