@@ -59,11 +59,17 @@ class menuWindow(QMainWindow, menu_form):
         grid_layout = QGridLayout(self.scrollAreaWidgetContents)  # 스크롤 영역에 레이아웃 추가
         self.scrollAreaWidgetContents.setLayout(grid_layout)
 
+        # 열 간격 설정
+        grid_layout.setHorizontalSpacing(10)
+
         # 버튼 생성 및 추가
         buttons = []
         for i, (image_url, text) in enumerate(zip(popular_images, popular_texts)):
             button = QPushButton(self)
             buttons.append(button)
+
+            # 버튼 크기 설정
+            button.setFixedSize(200, 150)
 
             # 이미지 설정
             response = requests.get(image_url)
