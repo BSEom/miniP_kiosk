@@ -6,7 +6,7 @@ import requests
 from exPrice_window import expriceWindow
 import cx_Oracle as oci
 
-menu_form = uic.loadUiType("D:/project/miniP_kiosk/ui/menu.ui")[0]
+menu_form = uic.loadUiType("ui/menu.ui")[0]
 
 sid = 'XE'
 host = '210.119.14.76' 
@@ -23,9 +23,9 @@ class menuWindow(QMainWindow, menu_form):
         self.loadData()
 
     def initUI(self):
-        uic.loadUi('D:/project/miniP_kiosk/ui/menu.ui', self)
+        uic.loadUi('ui/menu.ui', self)
         self.setWindowTitle('Cafe Kiosk')
-        self.setWindowIcon(QIcon('./coffee-cup.png'))
+        self.setWindowIcon(QIcon('img/coffee-cup.png'))
 
     def loadData(self):
         """
