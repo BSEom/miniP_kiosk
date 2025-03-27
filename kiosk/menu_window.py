@@ -5,11 +5,13 @@ from PyQt5 import uic
 import requests
 from exPrice_window import expriceWindow
 import cx_Oracle as oci
+import os
 
 menu_form = uic.loadUiType("ui/menu.ui")[0]
 
 sid = 'XE'
-host = '210.119.14.76' 
+# host = '210.119.14.76' 
+host = 'localhost'
 port = 1521
 username = 'kiosk' 
 password = '12345'
@@ -23,7 +25,7 @@ class menuWindow(QMainWindow, menu_form):
         self.loadData()
 
     def initUI(self):
-        uic.loadUi('ui/menu.ui', self)
+        # uic.loadUi('ui/menu.ui', self)
         self.setWindowTitle('Cafe Kiosk')
         self.setWindowIcon(QIcon('img/coffee-cup.png'))
 
@@ -41,6 +43,7 @@ class menuWindow(QMainWindow, menu_form):
         # popular_images와 popular_texts 리스트 생성
         popular_images = []
         popular_texts = []
+        
         for row in cursor:
             popular_texts.append(row[0])  # 메뉴 이름 추가
             popular_images.append(row[3])  # 이미지 URL 또는 경로 추가
@@ -55,6 +58,10 @@ class menuWindow(QMainWindow, menu_form):
         """
         버튼에 이미지와 텍스트를 삽입 (3*n 동적 레이아웃)
         """
+        # 이미지가 저장된 폴더 경로 설정 (현재 실행 파일 기준)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        image_folder = os.path.join(base_dir, "../images/")  # 이미지 폴더 상대 경로
+        
         # 기존 버튼 제거 및 동적 레이아웃 생성
         grid_layout = QGridLayout(self.scrollAreaWidgetContents)  # 스크롤 영역에 레이아웃 추가
         self.scrollAreaWidgetContents.setLayout(grid_layout)
@@ -64,21 +71,27 @@ class menuWindow(QMainWindow, menu_form):
 
         # 버튼 생성 및 추가
         buttons = []
-        for i, (image_url, text) in enumerate(zip(popular_images, popular_texts)):
+        for i, (image_filename, text) in enumerate(zip(popular_images, popular_texts)):
             button = QPushButton(self)
-            buttons.append(button)
+            # buttons.append(button)
 
             # 버튼 크기 설정
             button.setFixedSize(200, 150)
+            
+            # 이미지 경로 조합 (파일명이 저장된 경우)
+            image_path = os.path.join(image_folder, image_filename)
+            image_path = os.path.normpath(image_path)  # OS에 맞게 경로 변환
+            image_path = image_path.replace('\\', '/')
+            
+            # 이미지 설정 (로컬 이미지 파일 사용)
+            pixmap = QPixmap(image_path)
 
-            # 이미지 설정
-            response = requests.get(image_url)
-            if response.status_code == 200:
-                pixmap = QPixmap()
-                pixmap.loadFromData(response.content)
+            if not pixmap.isNull():  # 이미지가 정상적으로 로드되었을 경우
                 resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 button.setIcon(QIcon(resized_pixmap))
                 button.setIconSize(QSize(100, 100))
+            else:
+                print(f"이미지 로드 실패: {image_path}")  # 경로 오류 시 로그 출력
 
             # 텍스트 설정
             button.setText(text)

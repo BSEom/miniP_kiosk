@@ -8,7 +8,8 @@ import cx_Oracle as oci
 
 # DB연결
 sid = 'XE'
-host = '210.119.14.76' 
+# host = '210.119.14.76' 
+host = 'localhost'
 port = 1521
 username = 'kiosk' 
 password = '12345'

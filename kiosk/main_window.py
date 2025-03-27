@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 from menu_window import menuWindow
+import requests
 from manager_window import managerWindow
 
 main_form = uic.loadUiType("ui/kiosk.ui")[0]
