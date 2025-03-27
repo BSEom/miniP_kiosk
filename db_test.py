@@ -5,18 +5,14 @@ from PyQt5.QtGui import *
 from PyQt5 import QtGui, QtWidgets, uic
 import cx_Oracle as oci
 from PyQt5.QtCore import Qt, QSize
-
+import requests
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import Qt, QSize
+from io import BytesIO
 
 main_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\kiosk.ui")[0]
 menu_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\menu.ui")[0]
 manager_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\manager.ui")[0]
-
-# DB 연결 설정
-sid = 'XE'
-host = '210.119.14.76'
-port = 1521
-username = 'kiosk'
-password = '12345'
 
 # 시작화면
 class mainWindow(QMainWindow, main_form):
@@ -26,6 +22,21 @@ class mainWindow(QMainWindow, main_form):
         # 팝업창 이름, 아이콘 설정
         self.setWindowTitle("Cafe Kiosk")
         self.setWindowIcon(QIcon('D:\YEJ\code\miniP_Kiosk\coffee-cup.png'))
+
+        # DB 연결 설정
+        #sid = 'XE'
+        ##host = '210.119.14.76'
+        ##port = 1521
+        #username = 'kiosk'
+        #password = '12345'
+
+        # DB 연결
+        #conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
+        #cursor = conn.cursor()
+
+        # 메뉴 데이터 가져오기
+        #query = 'SELECT menu_id, menu_name, menu_price, category, image FROM MENU'
+        #cursor.execute(query)
 
         # 버튼 클릭 시 menuWindow 호출
         self.start_btn.clicked.connect(self.menuWindow)
@@ -65,40 +76,145 @@ class menuWindow(QMainWindow, menu_form):
         self.setWindowTitle("Cafe Kiosk")
         self.setWindowIcon(QIcon('D:\YEJ\code\miniP_Kiosk\coffee-cup.png'))
 
-        # 데이터베이스 연결
-        db = DatabaseManager()
-        db.connect()
+        # 인기탭 메뉴 이미지 삽입
+        popular_buttons = [
+            self.popular1, self.popular2, self.popular3,
+            self.popular4, self.popular5, self.popular6,
+            self.popular7, self.popular8, self.popular9,
+        ]
 
-        # 메뉴 데이터 가져오기
-        menu_data = db.fetch_menu_data()
+        popular_image = [
+            "https://ediya.com/files/menu/IMG_1660608743501.png",
+            "https://ediya.com/files/menu/IMG_1647324593188.png",
+            "https://ediya.com/files/menu/IMG_1647321941152.png",
+            "https://ediya.com/files/menu/IMG_1730080275823.png",
+            "https://ediya.com/files/menu/IMG_1709599391117.png",
+            "https://ediya.com/files/menu/IMG_1737089595532.png",
+            "https://ediya.com/files/menu/IMG_1721112356312.png",
+            "https://ediya.com/files/menu/IMG_1721117534865.png",
+            "https://ediya.com/files/menu/IMG_1742279746779.png"
+        ]
 
-        # 카테고리별 버튼 리스트
-        buttons = {
-            "popular": [
-                self.popular1, self.popular2, self.popular3,
-                self.popular4, self.popular5, self.popular6,
-                self.popular7, self.popular8, self.popular9
-            ],
-            "season": [
-                self.season1, self.season2, self.season3,
-                self.season4, self.season5, self.season6,
-                self.season7, self.season8, self.season9
-            ],
-            # 다른 카테고리도 추가 가능
-        }
+        # 반복문으로 버튼에 아이콘과 크기 설정
+        for button, image_url in zip(popular_buttons, popular_image):
+            try:
+                # URL에서 이미지 다운로드
+                response = requests.get(image_url)
+                if response.status_code == 200:
+                    # 이미지를 QPixmap으로 로드
+                    pixmap = QPixmap()
+                    pixmap.loadFromData(response.content)
+                    
+                    # 이미지 크기 조정
+                    resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    
+                    # 버튼에 아이콘 설정
+                    button.setIcon(QIcon(resized_pixmap))
+                    button.setIconSize(QSize(100, 100))
+                else:
+                    print(f"이미지를 다운로드할 수 없습니다: {image_url}")
+            except Exception as e:
+                print(f"이미지 로드 중 오류 발생: {e}")
+        
+        # popular1 버튼 클릭 시 설명 창 띄우기
+        self.popular1.clicked.connect(self.exp_price)
+        
 
-        # 버튼에 데이터 설정
-        for menu_id, menu_name, menu_price, category, image in menu_data:
-            if category in buttons:
-                button_list = buttons[category]
-                if menu_id <= len(button_list):  # 버튼이 존재하는 경우
-                    button = button_list[menu_id - 1]
-                    button.setText(menu_name)  # 버튼 텍스트 설정
-                    button.setIcon(QIcon(image))  # 버튼 아이콘 설정
-                    button.setIconSize(QSize(100, 100))  # 아이콘 크기 설정
+        # 커피탭 메뉴 이미지 삽입=======================================
+        coffee_buttons = [
+            self.coffee1, self.coffee2, self.coffee3,
+            self.coffee4, self.coffee5, self.coffee6,
+            self.coffee7, self.coffee8, self.coffee9
+        ]
 
-        # 데이터베이스 연결 종료
-        db.disconnect()
+        coffee_image = [
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+        ]
+
+        # 반복문으로 버튼에 아이콘과 크기 설정
+        for button, image_path in zip(coffee_buttons, coffee_image):
+            button.setIcon(QIcon(image_path))
+            button.setIconSize(QSize(100, 100))
+
+        # 논커피 메뉴 이미지 삽입=======================================
+        n_coffee_buttons = [
+            self.n_coffee1, self.n_coffee2, self.n_coffee3,
+            self.n_coffee4, self.n_coffee5, self.n_coffee6,
+            self.n_coffee7, self.n_coffee8, self.n_coffee9
+        ]
+
+        n_coffee_image = [
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+        ]
+
+        # 반복문으로 버튼에 아이콘과 크기 설정
+        for button, image_path in zip(n_coffee_buttons, n_coffee_image):
+            button.setIcon(QIcon(image_path))
+            button.setIconSize(QSize(100, 100))
+
+        # 스무디 메뉴 이미지 삽입=======================================
+        smoothie_buttons = [
+            self.smoothie1, self.smoothie2, self.smoothie3,
+            self.smoothie4, self.smoothie5, self.smoothie6,
+            self.smoothie7, self.smoothie8, self.smoothie9
+        ]
+
+        smoothie_image = [
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+        ]
+
+        # 반복문으로 버튼에 아이콘과 크기 설정
+        for button, image_path in zip(smoothie_buttons, smoothie_image):
+            button.setIcon(QIcon(image_path))
+            button.setIconSize(QSize(100, 100))
+
+        # 에이드 메뉴 이미지 삽입=======================================
+        ade_buttons = [
+            self.ade1, self.ade2, self.ade3,
+            self.ade4, self.ade5, self.ade6,
+            self.ade7, self.ade8, self.ade9
+        ]
+
+        ade_image = [
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
+            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+        ]
+
+        # 반복문으로 버튼에 아이콘과 크기 설정
+        for button, image_path in zip(ade_buttons, ade_image):
+            button.setIcon(QIcon(image_path))
+            button.setIconSize(QSize(100, 100))
 
 
         
