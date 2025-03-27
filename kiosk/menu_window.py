@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt, QSize
 from PyQt5 import uic
@@ -14,6 +14,7 @@ port = 1521
 username = 'kiosk' 
 password = '12345'
 
+# 메뉴창
 class menuWindow(QMainWindow, menu_form):
     def __init__(self):
         super().__init__()
@@ -52,17 +53,25 @@ class menuWindow(QMainWindow, menu_form):
 
     def menuTable(self, popular_images, popular_texts):
         """
-        버튼에 이미지와 텍스트를 삽입
+        버튼에 이미지와 텍스트를 삽입 (3*n 동적 레이아웃)
         """
-        # 3x3 버튼 목록
-        popular_buttons = [
-            self.popular1, self.popular2, self.popular3,
-            self.popular4, self.popular5, self.popular6,
-            self.popular7, self.popular8, self.popular9
-        ]
+        # 기존 버튼 제거 및 동적 레이아웃 생성
+        grid_layout = QGridLayout(self.scrollAreaWidgetContents)  # 스크롤 영역에 레이아웃 추가
+        self.scrollAreaWidgetContents.setLayout(grid_layout)
 
-        # 버튼에 이미지 및 텍스트 삽입
-        for button, image_url, text in zip(popular_buttons, popular_images, popular_texts):
+        # 열 간격 설정
+        grid_layout.setHorizontalSpacing(10)
+
+        # 버튼 생성 및 추가
+        buttons = []
+        for i, (image_url, text) in enumerate(zip(popular_images, popular_texts)):
+            button = QPushButton(self)
+            buttons.append(button)
+
+            # 버튼 크기 설정
+            button.setFixedSize(200, 150)
+
+            # 이미지 설정
             response = requests.get(image_url)
             if response.status_code == 200:
                 pixmap = QPixmap()
@@ -70,10 +79,16 @@ class menuWindow(QMainWindow, menu_form):
                 resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 button.setIcon(QIcon(resized_pixmap))
                 button.setIconSize(QSize(100, 100))
-            button.setText(text)  # 버튼에 텍스트 설정
 
-        # 버튼 클릭 이벤트 연결
-        for button in popular_buttons:
+            # 텍스트 설정
+            button.setText(text)
+
+            # 버튼을 그리드 레이아웃에 추가 (3열 기준)
+            row = i // 3
+            col = i % 3
+            grid_layout.addWidget(button, row, col)
+
+            # 버튼 클릭 이벤트 연결
             button.clicked.connect(self.showExpriceWindow)
 
     def showExpriceWindow(self):

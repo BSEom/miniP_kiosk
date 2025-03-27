@@ -3,8 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 
-# Oracle 모듈
-import cx_Oracle as oci
+manager_form = uic.loadUiType("D:/project/miniP_kiosk/ui/manager.ui")[0]
 
 ## DB 연결 설정
 sid = 'XE'
