@@ -5,14 +5,14 @@ from menu_window import menuWindow
 from manager_window import managerWindow
 
 
-main_form = uic.loadUiType("D:/YEJ/code/miniP_Kiosk/ui/kiosk.ui")[0]
+main_form = uic.loadUiType("C:\Source\miniP_kiosk\test\kiosk.py")[0]
 
 class mainWindow(QMainWindow, main_form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Cafe Kiosk")
-        self.setWindowIcon(QIcon("D:/YEJ/code/miniP_Kiosk/img/coffee-cup.png"))
+        self.setWindowIcon(QIcon("img\coffee-cup.png"))
 
         self.start_btn.clicked.connect(self.menuWindow)
         self.manager_btn.clicked.connect(self.managerWindow)

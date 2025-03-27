@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 
-expPrice_form = uic.loadUiType("D:/YEJ/code/miniP_Kiosk/ui/exp_price.ui")[0]
+expPrice_form = uic.loadUiType("ui\exp_price.ui")[0]
 
 import cx_Oracle as oci
 

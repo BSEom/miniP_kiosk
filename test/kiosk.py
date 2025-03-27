@@ -6,9 +6,9 @@ from PyQt5 import QtGui, QtWidgets, uic
 import cx_Oracle as oci
 from PyQt5.QtCore import Qt, QSize
 
-main_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\kiosk.ui")[0]
-menu_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\menu.ui")[0]
-manager_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\manager.ui")[0]
+main_form = uic.loadUiType("ui\kiosk.ui")[0]
+menu_form = uic.loadUiType("ui\menu.ui")[0]
+manager_form = uic.loadUiType("ui\manager.ui")[0]
 
 # 시작화면
 class mainWindow(QMainWindow, main_form):
@@ -17,7 +17,7 @@ class mainWindow(QMainWindow, main_form):
         self.setupUi(self)
         # 팝업창 이름, 아이콘 설정
         self.setWindowTitle("Cafe Kiosk")
-        self.setWindowIcon(QIcon('D:\YEJ\code\miniP_Kiosk\coffee-cup.png'))
+        self.setWindowIcon(QIcon('img\coffee-cup.png'))
 
         # DB 연결 설정
         #sid = 'XE'
@@ -70,7 +70,7 @@ class menuWindow(QMainWindow, menu_form):
         super().__init__()
         self.setupUi(self)  # UI 초기화
         self.setWindowTitle("Cafe Kiosk")
-        self.setWindowIcon(QIcon('D:\YEJ\code\miniP_Kiosk\coffee-cup.png'))
+        self.setWindowIcon(QIcon('img\coffee-cup.png'))
 
         # 인기기탭 메뉴 이미지 삽입=======================================
         popular_buttons = [
@@ -80,15 +80,15 @@ class menuWindow(QMainWindow, menu_form):
         ]
 
         popular_image = [
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg"
         ]
 
         # 반복문으로 버튼에 아이콘과 크기 설정
@@ -104,15 +104,15 @@ class menuWindow(QMainWindow, menu_form):
         ]
 
         season_image = [
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg"
         ]
 
         # 반복문으로 버튼에 아이콘과 크기 설정
@@ -129,15 +129,15 @@ class menuWindow(QMainWindow, menu_form):
         ]
 
         coffee_image = [
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg"
         ]
 
         # 반복문으로 버튼에 아이콘과 크기 설정
@@ -153,15 +153,15 @@ class menuWindow(QMainWindow, menu_form):
         ]
 
         n_coffee_image = [
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg"
         ]
 
         # 반복문으로 버튼에 아이콘과 크기 설정
@@ -177,15 +177,15 @@ class menuWindow(QMainWindow, menu_form):
         ]
 
         smoothie_image = [
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg"
         ]
 
         # 반복문으로 버튼에 아이콘과 크기 설정
@@ -201,15 +201,15 @@ class menuWindow(QMainWindow, menu_form):
         ]
 
         ade_image = [
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg",
+            "img\mainImage.jpg"
         ]
 
         # 반복문으로 버튼에 아이콘과 크기 설정
@@ -224,7 +224,7 @@ class managerWindow(QMainWindow, manager_form):
         super().__init__()
         self.setupUi(self)  # UI 초기화
         self.setWindowTitle("Cafe Kiosk")
-        self.setWindowIcon(QIcon('D:\YEJ\code\miniP_Kiosk\coffee-cup.png'))
+        self.setWindowIcon(QIcon('img\coffee-cup.png'))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
