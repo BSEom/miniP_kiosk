@@ -4,7 +4,7 @@ from PyQt5 import uic
 from menu_window import menuWindow
 from manager_window import managerWindow
 
-main_form = uic.loadUiType("D:/project/miniP_kiosk/ui/kiosk.ui")[0]
+main_form = uic.loadUiType("ui/kiosk.ui")[0]
 
 # 시작, 관리자 선택창
 class mainWindow(QMainWindow, main_form):
@@ -12,7 +12,7 @@ class mainWindow(QMainWindow, main_form):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Cafe Kiosk")
-        self.setWindowIcon(QIcon("D:/project/miniP_kiosk/img/coffee-cup.png"))
+        self.setWindowIcon(QIcon("img/coffee-cup.png"))
 
         self.start_btn.clicked.connect(self.menuWindow)         # 시작버튼 클릭
         self.manager_btn.clicked.connect(self.managerWindow)    # 관리자버튼 클릭
