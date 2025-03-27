@@ -5,10 +5,15 @@ from PyQt5.QtGui import *
 from PyQt5 import QtGui, QtWidgets, uic
 import cx_Oracle as oci
 from PyQt5.QtCore import Qt, QSize
+import requests
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import Qt, QSize
+from io import BytesIO
 
 main_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\kiosk.ui")[0]
 menu_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\menu.ui")[0]
 manager_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\manager.ui")[0]
+expPrice_form = uic.loadUiType("D:\YEJ\code\miniP_Kiosk\exp_price.ui")[0]
 
 # 시작화면
 class mainWindow(QMainWindow, main_form):
@@ -63,16 +68,22 @@ class mainWindow(QMainWindow, main_form):
     def managerWindow(self):
         self.window_3 = managerWindow()
         self.window_3.show()
+
+    
        
 # 메뉴 화면
 class menuWindow(QMainWindow, menu_form):
+    def expriceWindow(self):
+        self.window_4 = expriceWindow()
+        self.window_4.show()
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)  # UI 초기화
         self.setWindowTitle("Cafe Kiosk")
         self.setWindowIcon(QIcon('D:\YEJ\code\miniP_Kiosk\coffee-cup.png'))
 
-        # 인기기탭 메뉴 이미지 삽입=======================================
+        # 인기탭 메뉴 이미지 삽입
         popular_buttons = [
             self.popular1, self.popular2, self.popular3,
             self.popular4, self.popular5, self.popular6,
@@ -80,45 +91,41 @@ class menuWindow(QMainWindow, menu_form):
         ]
 
         popular_image = [
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
+            "https://ediya.com/files/menu/IMG_1660608743501.png",
+            "https://ediya.com/files/menu/IMG_1647324593188.png",
+            "https://ediya.com/files/menu/IMG_1647321941152.png",
+            "https://ediya.com/files/menu/IMG_1730080275823.png",
+            "https://ediya.com/files/menu/IMG_1709599391117.png",
+            "https://ediya.com/files/menu/IMG_1737089595532.png",
+            "https://ediya.com/files/menu/IMG_1721112356312.png",
+            "https://ediya.com/files/menu/IMG_1721117534865.png",
+            "https://ediya.com/files/menu/IMG_1742279746779.png"
         ]
 
         # 반복문으로 버튼에 아이콘과 크기 설정
-        for button, image_path in zip(popular_buttons, popular_image):
-            button.setIcon(QIcon(image_path))
-            button.setIconSize(QSize(100, 100))
-
-        # 시즌탭 메뉴 이미지 삽입=======================================
-        season_buttons = [
-            self.season1, self.season2, self.season3,
-            self.season4, self.season5, self.season6,
-            self.season7, self.season8, self.season9
-        ]
-
-        season_image = [
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg",
-            "D:/YEJ/code/miniP_Kiosk/mainImage.jpg"
-        ]
-
-        # 반복문으로 버튼에 아이콘과 크기 설정
-        for button, image_path in zip(season_buttons, season_image):
-            button.setIcon(QIcon(image_path))
-            button.setIconSize(QSize(100, 100))
+        for button, image_url in zip(popular_buttons, popular_image):
+            try:
+                # URL에서 이미지 다운로드
+                response = requests.get(image_url)
+                if response.status_code == 200:
+                    # 이미지를 QPixmap으로 로드
+                    pixmap = QPixmap()
+                    pixmap.loadFromData(response.content)
+                    
+                    # 이미지 크기 조정
+                    resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    
+                    # 버튼에 아이콘 설정
+                    button.setIcon(QIcon(resized_pixmap))
+                    button.setIconSize(QSize(100, 100))
+                else:
+                    print(f"이미지를 다운로드할 수 없습니다: {image_url}")
+            except Exception as e:
+                print(f"이미지 로드 중 오류 발생: {e}")
+        
+        # popular1 버튼 클릭 시 설명 창 띄우기
+        self.popular1.clicked.connect(self.expriceWindow)
+        self.show()
         
 
         # 커피탭 메뉴 이미지 삽입=======================================
@@ -218,10 +225,21 @@ class menuWindow(QMainWindow, menu_form):
             button.setIconSize(QSize(100, 100))
 
 
-        
+# 메뉴 설명 화면
+class expriceWindow(QMainWindow, expPrice_form):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)  # UI 초기화
+        self.setWindowTitle("Cafe Kiosk")
+        self.setWindowIcon(QIcon('D:\YEJ\code\miniP_Kiosk\coffee-cup.png'))
 
-    
+    # 메뉴 설명 창 내용 
+    def updateContent(self, name,description,price):
+        self.menu_name_label.setText(name)  # 메뉴 이름 표시
+        self.menu_description_label.setText(description)  # 메뉴 설명 표시
+        self.menu_price_label.setText(f"가격: {price}원")  # 메뉴 가격 표시
 
+   
 # 관리자 화면
 class managerWindow(QMainWindow, manager_form):
     def __init__(self):
@@ -229,6 +247,8 @@ class managerWindow(QMainWindow, manager_form):
         self.setupUi(self)  # UI 초기화
         self.setWindowTitle("Cafe Kiosk")
         self.setWindowIcon(QIcon('D:\YEJ\code\miniP_Kiosk\coffee-cup.png'))
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
