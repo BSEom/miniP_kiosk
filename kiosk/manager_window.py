@@ -14,14 +14,14 @@ username = 'kiosk'
 password = '12345'
 basic_msg = '학생정보 v1.0'
 
-class MainWindow(QMainWindow):
+class managerWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initUI()
         self.loadData()
 
     def initUI(self):
-        uic.loadUi(r'./ui/manager.ui', self)  # UI 파일 로드
+        uic.loadUi('ui/manager.ui', self)  # UI 파일 로드
         self.setWindowTitle('학생정보앱')
         self.setWindowIcon(QIcon('./image/duck.png'))
 
