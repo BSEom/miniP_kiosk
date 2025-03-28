@@ -8,7 +8,7 @@ from PyQt5.QtCore import Qt
 # DB 연결 함수
 def get_db_connection():
     sid = 'XE'
-    host = 'localhost'
+    host = '210.119.14.76'
     port = 1521
     username = 'kiosk'
     password = '12345'
@@ -61,6 +61,10 @@ class ManagerWindow(QMainWindow):
         self.tblMenu.setRowCount(len(rows))  # 행 수 설정
         self.tblMenu.setColumnCount(5)  # 열 수 설정 (5개 컬럼: menu_id, menu_name, menu_info, menu_price, category)
         self.tblMenu.setHorizontalHeaderLabels(["ID", "Name", "Info", "Price", "Category"])  # 열 헤더 설정
+        
+        self.tblMenu2.setRowCount(1)  # 행 수 설정
+        self.tblMenu2.setColumnCount(5)  # 열 수 설정 (5개 컬럼: menu_id, menu_name, menu_info, menu_price, category)
+        self.tblMenu2.setHorizontalHeaderLabels(["ID", "Name", "Info", "Price", "Category"])  # 열 헤더 설정
 
         for i, row in enumerate(rows):
             for j, item in enumerate(row):
@@ -103,7 +107,7 @@ class ManagerWindow(QMainWindow):
             menu_info = self.menu_info_input.text()
             menu_price = self.menu_price_input.text()
             category = self.menu_category_input.text()
-            image_url = self.menu_image_input.text()
+            
 
             self.update_menu_item(menu_id, menu_name, menu_info, menu_price, category, image_url)
             self.conn.commit()
@@ -134,20 +138,18 @@ class ManagerWindow(QMainWindow):
     def double_click_event(self):
         print("더블 클릭 이벤트 발생")  # 디버깅용 로그 추가
         selected_row = self.tblMenu.currentRow()
-        if selected_row >= 0:
-            # 상태 페이지로 이동 (여기서만 수정, 삭제 가능)
-            print("상태 페이지로 이동")  # 디버깅용 로그 추가
-            self.stackedWidget.setCurrentIndex(1)  # 1은 상태 페이지가 위치한 인덱스 번호로 설정 (필요한 인덱스로 수정)
-
-            # 상태 페이지(tblMenu2)로 데이터 전달
-            self.tblMenu2.setRowCount(1)  # 상태 페이지에 한 행만 설정 (필요시 수정 가능)
-            for col in range(self.tblMenu.columnCount()):
-                item = self.tblMenu.item(selected_row, col)
-                print(f"Setting tblMenu2[{0}, {col}] with {item.text() if item else ''}")  # 디버깅용 로그 추가
-                self.tblMenu2.setItem(0, col, QTableWidgetItem(item.text() if item else ""))
-
-            # 상태 페이지에서만 수정, 삭제 가능하도록 설정
-            self.enable_edit_buttons()
+        menu_id = self.tblMenu.item(selected_row, 0).text()
+        menu_name = self.tblMenu.item(selected_row, 1).text()
+        menu_info = self.tblMenu.item(selected_row, 2).text()
+        menu_price = self.tblMenu.item(selected_row,3).text()
+        category = self.tblMenu.item(selected_row, 4).text()
+        
+        
+        self.tblMenu2.setItem(0, 0, QTableWidgetItem(menu_id))
+        self.tblMenu2.setItem(0, 1, QTableWidgetItem(menu_name))
+        self.tblMenu2.setItem(0, 2, QTableWidgetItem(menu_info))
+        self.tblMenu2.setItem(0, 3, QTableWidgetItem(menu_price))
+        self.tblMenu2.setItem(0, 4, QTableWidgetItem(category))
 
     # 상태 페이지에서만 수정, 삭제, 추가 버튼 활성화
     def enable_edit_buttons(self):
