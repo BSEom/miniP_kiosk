@@ -65,7 +65,7 @@ class menuWindow(QMainWindow, menu_form):
         # 버튼 생성 및 추가
         for i, (menu_id, menu_name, menu_info, menu_price, image_filename) in enumerate(menu_data):
             menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
-
+            
             # 버튼을 그리드 레이아웃에 추가 (3열 기준)
             row = i // 3
             col = i % 3

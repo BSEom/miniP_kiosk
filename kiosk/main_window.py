@@ -4,7 +4,6 @@ from PyQt5 import uic
 from menu_window import menuWindow
 from manager_window import managerWindow
 
-
 main_form = uic.loadUiType("ui/kiosk.ui")[0]
 
 class mainWindow(QMainWindow, main_form):
