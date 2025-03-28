@@ -1,3 +1,4 @@
+
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QStackedWidget
 from PyQt5.uic import loadUi
@@ -15,7 +16,7 @@ def get_db_connection():
     return oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
 
 
-class ManagerWindow(QMainWindow):
+class managerWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         loadUi("ui/manager.ui", self)  # Qt Designer UI 로드
@@ -150,23 +151,6 @@ class ManagerWindow(QMainWindow):
         self.tblMenu2.setItem(0, 2, QTableWidgetItem(menu_info))
         self.tblMenu2.setItem(0, 3, QTableWidgetItem(menu_price))
         self.tblMenu2.setItem(0, 4, QTableWidgetItem(category))
-        
-        
-
-        # if selected_row >= 0:
-        #     # 상태 페이지로 이동 (여기서만 수정, 삭제 가능)
-        #     print("상태 페이지로 이동")  # 디버깅용 로그 추가
-        #     self.stackedWidget.setCurrentIndex(1)  # 1은 상태 페이지가 위치한 인덱스 번호로 설정 (필요한 인덱스로 수정)
-
-        #     # 상태 페이지(tblMenu2)로 데이터 전달
-        #     self.tblMenu2.setRowCount(1)  # 상태 페이지에 한 행만 설정 (필요시 수정 가능)
-        #     for col in range(self.tblMenu.columnCount()):
-        #         item = self.tblMenu.item(selected_row, col)
-        #         print(f"Setting tblMenu2[{0}, {col}] with {item.text() if item else ''}")  # 디버깅용 로그 추가
-        #         self.tblMenu2.setItem(0, col, QTableWidgetItem(item.text() if item else ""))
-
-        #     # 상태 페이지에서만 수정, 삭제 가능하도록 설정
-        #     self.enable_edit_buttons()
 
     # 상태 페이지에서만 수정, 삭제, 추가 버튼 활성화
     def enable_edit_buttons(self):
@@ -187,6 +171,6 @@ class ManagerWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = ManagerWindow()
+    window = managerWindow()
     window.show()
     sys.exit(app.exec_())
