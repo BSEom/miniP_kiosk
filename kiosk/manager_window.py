@@ -4,6 +4,10 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.uic import loadUi
 import cx_Oracle as oci
 from PyQt5.QtCore import Qt
+import os
+import random as r
+import requests as req
+from bs4 import BeautifulSoup as bs
 
 # DB 연결 함수
 def get_db_connection():
@@ -14,6 +18,90 @@ def get_db_connection():
     password = '12345'
     return oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
 
+# 크롤링한 데이터를 저장할 리스트
+save_folder = "images"
+os.makedirs(save_folder, exist_ok=True)
+
+db_name_list = []
+db_exp_list = []
+db_img_list = []
+db_categori_list = []
+db_price_list = []
+
+# 카테고리 리스트
+cate_list = ['12,', '13,', '14,', '15,', '16,']
+cate = ''
+
+url = "https://ediya.com/inc/ajax_brand.php"
+params = {
+    "gubun": "menu_more",
+    "product_cate": "7",
+    "chked_val": "12,",  # 카테고리
+    "skeyword": "",
+    "page": 1  # 페이지 번호
+}
+
+# 크롤링 함수
+def crawl_data():
+    global db_name_list, db_exp_list, db_img_list, db_categori_list, db_price_list
+    for c in cate_list:
+        if c == cate_list[0]:
+            cate = '커피'
+        elif c == cate_list[1]:
+            cate = '음료'
+        elif c == cate_list[2]:
+            cate = '차'
+        elif c == cate_list[3]:
+            cate = '플렛치노'
+        elif c == cate_list[4]:
+            cate = '쉐이크&에이드'
+        else:
+            cate = 'none'
+
+        page = 1
+
+        while True:
+            params["page"] = page
+            params["chked_val"] = c
+            response = req.get(url, params=params)
+
+            # 종료 조건
+            if response.status_code != 200 or response.text == 'none':  
+                break
+
+            data = response.text
+            soup = bs(data, 'html.parser')
+
+            # 메뉴 이름
+            names = soup.find_all("h2")
+            for a in range(len(names)):
+                names[a] = str(names[a]).split('<span')[0].replace('<h2>', '').strip()
+                db_name_list.append(names[a])
+                db_categori_list.append(cate)
+                db_price_list.append(r.randrange(4000, 6500, 100))
+
+            # 메뉴 설명
+            detail = soup.find_all("div", class_="detail_txt")
+            for b in range(len(detail)):
+                detail[b] = str(detail[b].text).replace('\u200b','').replace('\xa0', '').replace('\r\n', '')
+                db_exp_list.append(detail[b])
+
+            # 이미지 링크 
+            src_value = soup.find_all("img", alt="")
+            src_img = [img['src'] for img in src_value]
+            for v in range(len(src_img)):
+                img_url = src_img[v].replace('/files/menu/', '')
+                src_img[v] = 'https://ediya.com' + src_img[v]
+                db_img_list.append(img_url)
+
+                img_data = req.get(src_img[v]).content
+                img_name = os.path.join(save_folder, os.path.basename(img_url))
+                with open(img_name, "wb") as img_file:
+                    img_file.write(img_data)
+
+            page += 1
+
+# UI 클래스 정의
 class managerWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -34,57 +122,42 @@ class managerWindow(QMainWindow):
         # 상태 페이지 UI 요소 초기화
         self.previous_data = []
 
+        # 크롤링 데이터 로드
+        crawl_data()
+
         # 메뉴 데이터 로드
         self.load_menu_data()
 
-    def load_menu_data(self, category=None):
+    def load_menu_data(self):
         query = "SELECT menu_id, menu_name, menu_info, menu_price, category, image FROM MENU"
-        
-        # 조회 필터링
-        menu_id = self.check_menu_id.text()
-        menu_name = self.check_menu_name.text()
-        menu_info = self.check_menu_info.text()
-        menu_price = self.check_menu_price.text()
-        category = self.check_category_combobox.currentText()
-        
-        filters = []
-        values = []
-        
-        if menu_id:
-            filters.append("menu_id = :1")
-            values.append(menu_id)
-        if menu_name:
-            filters.append("menu_name LIKE :2")
-            values.append(f"%{menu_name}%")
-        if menu_info:
-            filters.append("menu_info LIKE :3")
-            values.append(f"%{menu_info}%")
-        if menu_price:
-            filters.append("menu_price = :4")
-            values.append(menu_price)
-        if category and category != '선택':
-            filters.append("category = :5")
-            values.append(category)
-
-        # 필터링 조건이 있다면 쿼리에 추가
-        if filters:
-            query += " WHERE " + " AND ".join(filters)
-
-        self.cursor.execute(query, tuple(values))
-        
+        self.cursor.execute(query)
         rows = self.cursor.fetchall()
-        self.tblMenu.setRowCount(len(rows))
-        self.tblMenu.setColumnCount(6)  # 이미지 추가
-        self.tblMenu.setHorizontalHeaderLabels(["ID", "Name", "Info", "Price", "Category", "Image"])
 
-        for i, row in enumerate(rows):
-            for j, item in enumerate(row):
-                table_item = QTableWidgetItem(str(item))
-                table_item.setFlags(table_item.flags() & ~Qt.ItemIsEditable)
-                self.tblMenu.setItem(i, j, table_item)
+        # 테이블 설정
+        self.tblMenu.setRowCount(len(db_name_list))
+        self.tblMenu.setColumnCount(7)
+        self.tblMenu.setHorizontalHeaderLabels(["ID", "Name", "Info", "Price", "Category", "Image", "Status"])
+
+        for i, name in enumerate(db_name_list):
+            menu_id = f"{i+1}"
+            menu_name = db_name_list[i]
+            menu_info = db_exp_list[i]
+            menu_price = db_price_list[i]
+            category = db_categori_list[i]
+            image_url = db_img_list[i]
+
+            # DB에 존재하는지 확인
+            status = "등록됨" if menu_name in [row[1] for row in rows] else "등록안됨"
+
+            self.tblMenu.setItem(i, 0, QTableWidgetItem(menu_id))
+            self.tblMenu.setItem(i, 1, QTableWidgetItem(menu_name))
+            self.tblMenu.setItem(i, 2, QTableWidgetItem(menu_info))
+            self.tblMenu.setItem(i, 3, QTableWidgetItem(str(menu_price)))
+            self.tblMenu.setItem(i, 4, QTableWidgetItem(category))
+            self.tblMenu.setItem(i, 5, QTableWidgetItem(image_url))
+            self.tblMenu.setItem(i, 6, QTableWidgetItem(status))
 
     def check_menu(self):
-        # 조회 버튼 클릭 시 해당 필터링된 조건으로 조회
         self.load_menu_data()
 
     def add_menu(self):
@@ -188,37 +261,30 @@ class managerWindow(QMainWindow):
                 self.load_menu_data()
                 QMessageBox.information(self, '성공', '수정 사항이 성공적으로 적용되었습니다.')
         else:
-            print("변경 사항을 적용하지 않았습니다.")
+            self.load_menu_data()
 
     def revert_changes(self):
-        if self.previous_data:
-            menu_id, menu_name, menu_info, menu_price, category, image_url = self.previous_data
+        # 수정 전 상태로 되돌리기
+        self.menu_name_input.setText(self.previous_data[1])
+        self.menu_info_input.setPlainText(self.previous_data[2])
+        self.menu_price_input.setText(self.previous_data[3])
+        self.category_combobox.setCurrentText(self.previous_data[4])
+        self.menu_image_input.setText(self.previous_data[5])
 
-            self.menu_name_input.setText(menu_name)
-            self.menu_info_input.setPlainText(menu_info)
-            self.menu_price_input.setText(menu_price)
-            self.category_combobox.setCurrentText(category)
-            self.menu_image_input.setText(image_url)
+        # 이미지 파일 경로 업데이트
+        image_url = f"images/{self.previous_data[5]}"
+        pixmap = QPixmap(image_url)
+        pixmap = pixmap.scaled(self.menu_image_input.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.menu_image_input.setPixmap(pixmap)
 
-            pixmap = QPixmap(f"images/{image_url}")
-            pixmap = pixmap.scaled(self.menu_image_input.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.menu_image_input.setPixmap(pixmap)
-
-            selected_row = self.tblMenu.currentRow()
-            if selected_row >= 0:
-                self.tblMenu.setItem(selected_row, 0, QTableWidgetItem(menu_id))
-                self.tblMenu.setItem(selected_row, 1, QTableWidgetItem(menu_name))
-                self.tblMenu.setItem(selected_row, 2, QTableWidgetItem(menu_info))
-                self.tblMenu.setItem(selected_row, 3, QTableWidgetItem(menu_price))
-                self.tblMenu.setItem(selected_row, 4, QTableWidgetItem(category))
-                self.tblMenu.setItem(selected_row, 5, QTableWidgetItem(image_url))
-
-            print("수정 전 상태로 되돌렸습니다.")
+        print("수정 전 상태로 되돌렸습니다.")
 
     def closeEvent(self, event):
+        # 창을 닫을 때 DB 연결 종료
         if self.conn:
             self.conn.close()
         event.accept()
+
 
 
 if __name__ == '__main__':
