@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QStacke
 from PyQt5.uic import loadUi
 import cx_Oracle as oci
 from PyQt5.QtCore import Qt
-
+from manager_function import managerFunction
 
 # DB 연결 함수
 def get_db_connection():
@@ -30,6 +30,7 @@ class managerWindow(QMainWindow):
         self.mbtn_add.clicked.connect(self.add_menu)
         self.mbtn_mod.clicked.connect(self.update_menu)
         self.mbtn_del.clicked.connect(self.delete_menu)
+        self.change_btn.clicked.connect(self.cal_win)
 
         # 더블 클릭 시 상태 페이지(tblMenu2)로 이동하기 위한 코드
         self.tblMenu.doubleClicked.connect(self.double_click_event)
@@ -167,6 +168,10 @@ class managerWindow(QMainWindow):
     def closeEvent(self, event):
         self.cursor.close()
         self.conn.close()
+
+    def cal_win(self):
+        self.window_5 = managerFunction()
+        self.window_5.show()
 
 
 if __name__ == '__main__':

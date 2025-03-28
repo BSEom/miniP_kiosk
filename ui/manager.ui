@@ -258,6 +258,19 @@
     <widget class="QWidget" name="page_3"/>
     <widget class="QWidget" name="page_4"/>
    </widget>
+   <widget class="QPushButton" name="change_btn">
+    <property name="geometry">
+     <rect>
+      <x>970</x>
+      <y>750</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>이동</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
