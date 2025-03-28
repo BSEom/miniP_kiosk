@@ -16,7 +16,7 @@ def get_db_connection():
     return oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
 
 
-class ManagerWindow(QMainWindow):
+class managerWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         loadUi("ui/manager.ui", self)  # Qt Designer UI 로드
@@ -171,6 +171,6 @@ class ManagerWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = ManagerWindow()
+    window = managerWindow()
     window.show()
     sys.exit(app.exec_())
