@@ -10,8 +10,8 @@ import os
 menu_form = uic.loadUiType("ui/menu.ui")[0]
 
 sid = 'XE'
-# host = '210.119.14.76' 
-host = 'localhost'
+host = '210.119.14.76' 
+# host = 'localhost'
 port = 1521
 username = 'kiosk' 
 password = '12345'
@@ -22,17 +22,16 @@ class menuWindow(QMainWindow, menu_form):
         super().__init__()
         self.setupUi(self)
         self.initUI()
-        self.loadData()
+        # self.loadCategoryData() # 카테고리 데이터 로드    -- 카테고리탭 추가중!!! 
+        self.loadMenuData()     # 메뉴 데이터 로드
 
     def initUI(self):
         # uic.loadUi('ui/menu.ui', self)
         self.setWindowTitle('Cafe Kiosk')
         self.setWindowIcon(QIcon('img/coffee-cup.png'))
 
-    def loadData(self):
-        """
-        데이터베이스에서 메뉴 데이터를 불러와 menuTable에 전달
-        """
+    # 메뉴 데이터 로드
+    def loadMenuData(self):     # loadData() -> loadMenuData() 변경     -- 이거 이름 바꿈!!!! 확인 부탁!!!
         # DB 연결
         conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
         cursor = conn.cursor()
@@ -55,9 +54,6 @@ class menuWindow(QMainWindow, menu_form):
         self.menuTable(popular_images, popular_texts)
 
     def menuTable(self, popular_images, popular_texts):
-        """
-        버튼에 이미지와 텍스트를 삽입 (3*n 동적 레이아웃)
-        """
         # 이미지가 저장된 폴더 경로 설정 (현재 실행 파일 기준)
         base_dir = os.path.dirname(os.path.abspath(__file__))
         image_folder = os.path.join(base_dir, "../images/")  # 이미지 폴더 상대 경로
@@ -101,12 +97,9 @@ class menuWindow(QMainWindow, menu_form):
             col = i % 3
             grid_layout.addWidget(button, row, col)
 
-            # 버튼 클릭 이벤트 연결
+            # 메뉴 버튼 클릭 > 설명창 띄움
             button.clicked.connect(self.showExpriceWindow)
 
     def showExpriceWindow(self):
-        """
-        exPriceWindow 창을 표시
-        """
         self.window_4 = expriceWindow()
         self.window_4.show()
