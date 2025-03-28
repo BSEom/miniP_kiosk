@@ -5,7 +5,7 @@ from menu_window import menuWindow
 from manager_window import managerWindow
 
 
-main_form = uic.loadUiType("C:\Source\miniP_kiosk\test\kiosk.py")[0]
+main_form = uic.loadUiType("ui\kiosk.ui")[0]
 
 class mainWindow(QMainWindow, main_form):
     def __init__(self):

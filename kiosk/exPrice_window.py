@@ -8,7 +8,7 @@ import cx_Oracle as oci
 
 # DB연결
 sid = 'XE'
-host = '210.119.14.76' 
+host = '127.0.0.1' 
 port = 1521
 username = 'kiosk' 
 password = '12345'
@@ -18,7 +18,7 @@ class expriceWindow(QMainWindow, expPrice_form):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Cafe Kiosk")
-        self.setWindowIcon(QIcon("D:/YEJ/code/miniP_Kiosk/img/coffee-cup.png"))
+        self.setWindowIcon(QIcon("img\coffee-cup.png"))
 
     def loadData(self):
         # db연결

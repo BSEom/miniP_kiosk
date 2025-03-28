@@ -9,7 +9,7 @@ import cx_Oracle as oci
 menu_form = uic.loadUiType("ui\menu.ui")[0]
 
 sid = 'XE'
-host = '210.119.14.76' 
+host = '127.0.0.1' 
 port = 1521
 username = 'kiosk' 
 password = '12345'
