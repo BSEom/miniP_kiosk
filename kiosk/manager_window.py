@@ -9,15 +9,8 @@ from PyQt5.QtWidgets import QMessageBox
 # Oracle 모듈
 import cx_Oracle as oci
 
-## DB 연결 설정
-sid = 'XE'
-host = '210.119.14.76' 
-port = 1521
-username = 'kiosk' 
-password = '12345'
-basic_msg = '학생정보 v1.0'
-
-class MainWindow(QMainWindow):
+# 관리자창
+class managerWindow(QMainWindow, manager_form):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initUI()
@@ -303,7 +296,3 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = MainWindow()
     app.exec_()
-
-
-
-
