@@ -58,7 +58,7 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QComboBox" name="combo_menu_category">
+      <widget class="QComboBox" name="category_combobox">
        <item>
         <property name="text">
          <string>선택</string>
@@ -77,11 +77,6 @@
        <item>
         <property name="text">
          <string>커피</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>논커피</string>
         </property>
        </item>
        <item>
@@ -192,26 +187,6 @@
      </item>
     </layout>
    </widget>
-   <widget class="QListView" name="tblMenu">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>751</width>
-      <height>401</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListView" name="tblMenu2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>490</y>
-      <width>751</width>
-      <height>271</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -238,7 +213,7 @@
      <string>상태 페이지</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="mbtn_check">
     <property name="geometry">
      <rect>
       <x>810</x>
@@ -251,6 +226,38 @@
      <string>조회</string>
     </property>
    </widget>
+   <widget class="QTableWidget" name="tblMenu">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>731</width>
+      <height>401</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="tblMenu2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>480</y>
+      <width>731</width>
+      <height>291</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QStackedWidget" name="stackedWidget">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>500</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <widget class="QWidget" name="page_3"/>
+    <widget class="QWidget" name="page_4"/>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -258,7 +265,7 @@
      <x>0</x>
      <y>0</y>
      <width>1095</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
