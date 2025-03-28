@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QWidget, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QWidget, QVBoxLayout, QLabel, QTabWidget
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt, QSize
 from PyQt5 import uic
@@ -14,67 +14,85 @@ port = 1521
 username = 'kiosk'
 password = '12345'
 
+# 메뉴 목록을 보여주는 창
 class menuWindow(QMainWindow, menu_form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.initUI()
-        self.loadMenuData()
+        self.loadCategories()
+        # self.loadMenuData()   # 카테고리 로드한 후에 카테고리별로 실행해야돼서 뺐음
 
     def initUI(self):
         self.setWindowTitle('Cafe Kiosk')
         self.setWindowIcon(QIcon('img/coffee-cup.png'))
-
-    def loadMenuData(self):
-        """
-        데이터베이스에서 메뉴 데이터를 가져와 동적으로 버튼 생성
-        """
-        # DB 연결
+    
+    # 카테고리 목록을 DB에서 가져와서 탭 동적 생성
+    def loadCategories(self):
         conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
         cursor = conn.cursor()
 
-        # 메뉴 데이터 가져오기
-        query = 'SELECT menu_id, menu_name, menu_info, menu_price, image FROM menu'
+        query = 'SELECT DISTINCT category FROM menu'    # 카테고리 중복 제거
         cursor.execute(query)
+        categories = [row[0] for row in cursor]  # 카테고리 목록
+
+        cursor.close()
+        conn.close()
+
+        # 각 카테고리에 대한 탭 추가
+        for category in categories:
+            self.addCategoryTab(category)
+
+    # 카테고리 탭 추가하고 카테고리별로 메뉴를 DB에서 가져와서 버튼 동적 생성
+    # 이 부분에 뭘 잘 수정하면 ui틀 유지하면서 스크롤 기능 들어갈 것 같은데... ㅠ -정민
+    def addCategoryTab(self, category):
+        tab = QWidget()
+        layout = QGridLayout(tab)
+        tab.setLayout(layout)
+
+        # 탭을 tabWidget에 추가
+        self.tabWidget.addTab(tab, category)
+
+        # 카테고리별로 메뉴 불러오기
+        self.loadMenuData(category, layout)
+
+    # 카테고리별 메뉴를 DB에서 가져와서 버튼 동적 생성
+    def loadMenuData(self, category, layout):
+        conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
+        cursor = conn.cursor()
+
+        query = 'SELECT menu_id, menu_name, image FROM menu WHERE category = :category'
+        cursor.execute(query, {'category': category})
 
         # 메뉴 데이터를 저장할 리스트
         menu_data = cursor.fetchall()
 
-        # DB 연결 닫기
         cursor.close()
         conn.close()
 
-        # menuTable 함수 호출
-        self.menuTable(menu_data)
+        # 메뉴 테이블 생성
+        self.menuTable(menu_data, layout)
+        
+        # 이 아래 코드는 일단 지우지말아주세요... -정민
+        # for i, (menu_id, menu_name, image_filename) in enumerate(menu_data):
+        #     menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
+        #     row, col = divmod(i, 3)  # 3열 기준 배치
+        #     layout.addWidget(menu_item, row, col)
 
-    def menuTable(self, menu_data):
-        """
-        동적으로 버튼 생성 및 클릭 이벤트 연결
-        """
-        # 이미지가 저장된 폴더 경로 설정
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        image_folder = os.path.join(base_dir, "../images/")  # 이미지 폴더 상대 경로
-
+    # 메뉴 테이블 생성
+    def menuTable(self, menu_data, layout):
         # 기존 버튼 제거 및 동적 레이아웃 생성
         grid_layout = QGridLayout(self.scrollAreaWidgetContents)  # 스크롤 영역에 레이아웃 추가
         self.scrollAreaWidgetContents.setLayout(grid_layout)
-
-        # 열 간격 설정
-        grid_layout.setHorizontalSpacing(10)
+        grid_layout.setHorizontalSpacing(1)
+        grid_layout.setContentsMargins(0, 0, 0, 0)  
 
         # 버튼 생성 및 추가
-        for i, (menu_id, menu_name, menu_info, menu_price, image_filename) in enumerate(menu_data):
+        for i, (menu_id, menu_name, image_filename) in enumerate(menu_data):
             menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
-            
-            # 버튼을 그리드 레이아웃에 추가 (3열 기준)
-            row = i // 3
-            col = i % 3
-            grid_layout.addWidget(menu_item, row, col)
+            layout.addWidget(menu_item, i // 3, i % 3)
 
     def createMenuWidget(self, menu_id, image_filename, text):
-        """
-        메뉴 위젯 생성 (이미지 버튼, 텍스트)
-        """
         base_dir = os.path.dirname(os.path.abspath(__file__))
         image_folder = os.path.join(base_dir, "../images/")  
         image_path = os.path.join(image_folder, image_filename)
@@ -102,8 +120,7 @@ class menuWindow(QMainWindow, menu_form):
         label = QLabel(text)
         label.setAlignment(Qt.AlignCenter)
         label.setWordWrap(True)
-        label.setFixedWidth(95)
-        label.setFixedHeight(40)
+        label.setFixedSize(95, 40)
 
         # 레이아웃 추가
         layout.addWidget(button)
