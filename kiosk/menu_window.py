@@ -9,7 +9,8 @@ from payment_window import paymentWindow
 
 menu_form = uic.loadUiType("miniP_kiosk/ui/menu.ui")[0]
 
-sid = 'ORCL'
+sid = 'XE'
+# host = '210.119.14.76'
 host = 'localhost'
 port = 1521
 username = 'kiosk'
@@ -57,25 +58,79 @@ class menuWindow(QMainWindow, menu_form):
         query = 'SELECT menu_id, menu_name, menu_info, menu_price, image FROM menu'
         cursor.execute(query)
 
+        cursor.close()
+        conn.close()
+        
+        tab_count = self.tabWidget.count()
+
+        # 각 카테고리에 대한 탭 추가
+        for i in range(min(tab_count, len(categories))):
+            category = categories[i]
+            self.setCategoryTab(i, category)
+
+    # 카테고리 탭에 적용용
+    def setCategoryTab(self, index, category):
+        """
+        기존의 특정 탭(index)에 카테고리명을 설정하고 해당 카테고리 메뉴 불러오기
+        """
+        # 탭 이름 변경
+        self.tabWidget.setTabText(index, category)
+
+        scroll_widget = self.tabWidget.widget(index).findChild(QWidget, f"scrollAreaWidgetContents_{index+1}")
+
+        # if not scroll_widget:
+        #     print(f"scrollWidgetContents_{index+1} 찾을 수 없음!")
+        #     return  # 에러 방지
+
+        layout = scroll_widget.findChild(QGridLayout, f"gridLayout_{index+8}")
+
+        if not layout:
+            print(f"gridLayout_{index+8} 찾을 수 없음! → 새로 생성함")
+            layout = QGridLayout(scroll_widget)
+            scroll_widget.setLayout(layout)
+            
+        self.loadMenuData(category, layout)
+
+    # 카테고리별 메뉴를 DB에서 가져와서 버튼 동적 생성
+    def loadMenuData(self, category, layout):
+        # 기존 메뉴 항목 제거 (중복 추가 방지)
+        while layout.count():
+            item = layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+                
+        conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
+        cursor = conn.cursor()
+
+        query = 'SELECT menu_id, menu_name, image FROM menu WHERE category = :category'
+        cursor.execute(query, {'category': category})
+
+        # 메뉴 데이터를 저장할 리스트
         menu_data = cursor.fetchall()
         cursor.close()
         conn.close()
 
-        self.menuTable(menu_data)
-
-    def menuTable(self, menu_data):
-        # 동적으로 버튼 생성 및 클릭 이벤트 연결
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        image_folder = os.path.join(base_dir, "../images/")
-        grid_layout = QGridLayout(self.scrollAreaWidgetContents)
-        self.scrollAreaWidgetContents.setLayout(grid_layout)
-        grid_layout.setHorizontalSpacing(10)
-
-        for i, (menu_id, menu_name, menu_info, menu_price, image_filename) in enumerate(menu_data):
+        # 메뉴 테이블 생성
+        # self.menuTable(menu_data, layout)
+        
+        # 이 아래 코드는 일단 지우지말아주세요... -정민
+        for i, (menu_id, menu_name, image_filename) in enumerate(menu_data):
             menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
-            row = i // 3
-            col = i % 3
-            grid_layout.addWidget(menu_item, row, col)
+            row, col = divmod(i, 3)  # 3열 기준 배치
+            layout.addWidget(menu_item, row, col)
+
+    # 메뉴 테이블 생성
+    # def menuTable(self, menu_data, layout):
+    #     # 기존 버튼 제거 및 동적 레이아웃 생성
+    #     grid_layout = QGridLayout(self.scrollAreaWidgetContents)  # 스크롤 영역에 레이아웃 추가
+    #     self.scrollAreaWidgetContents.setLayout(grid_layout)
+    #     grid_layout.setHorizontalSpacing(1)
+    #     grid_layout.setContentsMargins(0, 0, 0, 0)  
+
+        # 버튼 생성 및 추가
+        # for i, (menu_id, menu_name, image_filename) in enumerate(menu_data):
+        #     menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
+        #     layout.addWidget(menu_item, i // 3, i % 3)
 
     def createMenuWidget(self, menu_id, image_filename, text):
         base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -118,8 +173,7 @@ class menuWindow(QMainWindow, menu_form):
         label = QLabel(text)
         label.setAlignment(Qt.AlignCenter)
         label.setWordWrap(True)
-        label.setFixedWidth(95)
-        label.setFixedHeight(40)
+        label.setFixedSize(95, 50)
 
         layout.addWidget(button)
         layout.addWidget(label)
