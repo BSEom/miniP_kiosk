@@ -9,7 +9,8 @@ from PyQt5.QtCore import Qt
 # DB 연결 함수
 def get_db_connection():
     sid = 'XE'
-    host = '210.119.14.76'
+    # host = '210.119.14.76'
+    host = 'localhost'
     port = 1521
     username = 'kiosk'
     password = '12345'

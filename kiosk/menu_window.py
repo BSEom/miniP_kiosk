@@ -9,7 +9,8 @@ from exPrice_window import expriceWindow
 menu_form = uic.loadUiType("ui/menu.ui")[0]
 
 sid = 'XE'
-host = '210.119.14.76'
+# host = '210.119.14.76'
+host = 'localhost'
 port = 1521
 username = 'kiosk'
 password = '12345'
@@ -38,26 +39,45 @@ class menuWindow(QMainWindow, menu_form):
 
         cursor.close()
         conn.close()
+        
+        tab_count = self.tabWidget.count()
 
         # 각 카테고리에 대한 탭 추가
-        for category in categories:
-            self.addCategoryTab(category)
+        for i in range(min(tab_count, len(categories))):
+            category = categories[i]
+            self.setCategoryTab(i, category)
 
-    # 카테고리 탭 추가하고 카테고리별로 메뉴를 DB에서 가져와서 버튼 동적 생성
-    # 이 부분에 뭘 잘 수정하면 ui틀 유지하면서 스크롤 기능 들어갈 것 같은데... ㅠ -정민
-    def addCategoryTab(self, category):
-        tab = QWidget()
-        layout = QGridLayout(tab)
-        tab.setLayout(layout)
+    # 카테고리 탭에 적용용
+    def setCategoryTab(self, index, category):
+        """
+        기존의 특정 탭(index)에 카테고리명을 설정하고 해당 카테고리 메뉴 불러오기
+        """
+        # 탭 이름 변경
+        self.tabWidget.setTabText(index, category)
 
-        # 탭을 tabWidget에 추가
-        self.tabWidget.addTab(tab, category)
+        scroll_widget = self.tabWidget.widget(index).findChild(QWidget, f"scrollAreaWidgetContents_{index+1}")
 
-        # 카테고리별로 메뉴 불러오기
+        # if not scroll_widget:
+        #     print(f"scrollWidgetContents_{index+1} 찾을 수 없음!")
+        #     return  # 에러 방지
+
+        layout = scroll_widget.findChild(QGridLayout, f"gridLayout_{index+8}")
+
+        if not layout:
+            print(f"gridLayout_{index+8} 찾을 수 없음! → 새로 생성함")
+            layout = QGridLayout(scroll_widget)
+            scroll_widget.setLayout(layout)
+            
         self.loadMenuData(category, layout)
 
     # 카테고리별 메뉴를 DB에서 가져와서 버튼 동적 생성
     def loadMenuData(self, category, layout):
+        # 기존 메뉴 항목 제거 (중복 추가 방지)
+        while layout.count():
+            item = layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+                
         conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
         cursor = conn.cursor()
 
@@ -71,26 +91,26 @@ class menuWindow(QMainWindow, menu_form):
         conn.close()
 
         # 메뉴 테이블 생성
-        self.menuTable(menu_data, layout)
+        # self.menuTable(menu_data, layout)
         
         # 이 아래 코드는 일단 지우지말아주세요... -정민
-        # for i, (menu_id, menu_name, image_filename) in enumerate(menu_data):
-        #     menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
-        #     row, col = divmod(i, 3)  # 3열 기준 배치
-        #     layout.addWidget(menu_item, row, col)
-
-    # 메뉴 테이블 생성
-    def menuTable(self, menu_data, layout):
-        # 기존 버튼 제거 및 동적 레이아웃 생성
-        grid_layout = QGridLayout(self.scrollAreaWidgetContents)  # 스크롤 영역에 레이아웃 추가
-        self.scrollAreaWidgetContents.setLayout(grid_layout)
-        grid_layout.setHorizontalSpacing(1)
-        grid_layout.setContentsMargins(0, 0, 0, 0)  
-
-        # 버튼 생성 및 추가
         for i, (menu_id, menu_name, image_filename) in enumerate(menu_data):
             menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
-            layout.addWidget(menu_item, i // 3, i % 3)
+            row, col = divmod(i, 3)  # 3열 기준 배치
+            layout.addWidget(menu_item, row, col)
+
+    # 메뉴 테이블 생성
+    # def menuTable(self, menu_data, layout):
+    #     # 기존 버튼 제거 및 동적 레이아웃 생성
+    #     grid_layout = QGridLayout(self.scrollAreaWidgetContents)  # 스크롤 영역에 레이아웃 추가
+    #     self.scrollAreaWidgetContents.setLayout(grid_layout)
+    #     grid_layout.setHorizontalSpacing(1)
+    #     grid_layout.setContentsMargins(0, 0, 0, 0)  
+
+        # 버튼 생성 및 추가
+        # for i, (menu_id, menu_name, image_filename) in enumerate(menu_data):
+        #     menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
+        #     layout.addWidget(menu_item, i // 3, i % 3)
 
     def createMenuWidget(self, menu_id, image_filename, text):
         base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -120,7 +140,7 @@ class menuWindow(QMainWindow, menu_form):
         label = QLabel(text)
         label.setAlignment(Qt.AlignCenter)
         label.setWordWrap(True)
-        label.setFixedSize(95, 40)
+        label.setFixedSize(95, 50)
 
         # 레이아웃 추가
         layout.addWidget(button)
