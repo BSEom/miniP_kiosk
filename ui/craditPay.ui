@@ -17,13 +17,26 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>50</y>
+     <y>80</y>
      <width>161</width>
      <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>카드 넣으라는 아이콘 넣기</string>
+    <string>카드 아이콘</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>50</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>카드를 넣어주세요</string>
    </property>
   </widget>
  </widget>

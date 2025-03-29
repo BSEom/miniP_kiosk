@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="cash_btn">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -27,7 +27,7 @@
      <string>현금</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="credit_btn">
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -60,7 +60,7 @@
      <x>0</x>
      <y>0</y>
      <width>247</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>
