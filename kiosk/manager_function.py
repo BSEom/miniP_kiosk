@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
+from PyQt5.QtGui import QIcon
 import cx_Oracle as oci
 from PyQt5.QtCore import Qt, QDate
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QTextCharFormat, QColor
@@ -22,6 +23,7 @@ class managerFunction(QWidget):
     def __init__(self):
         super().__init__()
         loadUi("ui/cal.ui", self)  # Qt Designer UI 로드
+        self.initUI()
 
         # DB 연결
         self.conn = get_db_connection()
@@ -44,7 +46,11 @@ class managerFunction(QWidget):
 
         # 초기데이터 로드
         self.load_order_data()
-        # self.load_orderinfo_data()
+        self.load_orderinfo_data()
+
+    def initUI(self):
+        self.setWindowTitle('Cafe Kiosk')
+        self.setWindowIcon(QIcon('img/coffee-cup.png'))
 
     def select_date(self, date):
         """날짜 선택 로직"""
@@ -128,7 +134,7 @@ class managerFunction(QWidget):
         ss = 0
         for s in sum_list:
             ss += int(s)
-        self.labelSum.setText(f'총 매출: {ss}원')
+        self.labelSum.setText(f'총 매출: {ss:,}원')
 
         self.tableView_1.setModel(model)
 
@@ -159,6 +165,7 @@ class managerFunction(QWidget):
         model.setHorizontalHeaderLabels(["주문번호", "주문금액", "주문날짜"])
         sum_list = []
         for row in rows:
+            print(row, type(row), '\n')
             sum_list.append(row[1].replace(',', '').replace('원', '').strip())
             items = [QStandardItem(str(field)) for field in row]
             model.appendRow(items)
@@ -168,7 +175,7 @@ class managerFunction(QWidget):
         ss = 0
         for s in sum_list:
             ss += int(s)
-        self.labelSum.setText(f'총 매출: {ss}원')
+        self.labelSum.setText(f'총 매출: {ss:,}원')
         self.tableView_1.setModel(model)
 
     def update_order_data(self):
@@ -202,20 +209,55 @@ class managerFunction(QWidget):
         ss = 0
         for s in sum_list:
             ss += int(s)
-        self.labelSum.setText(f'총 매출: {ss}원')
+        self.labelSum.setText(f'총 매출: {ss:,}원')
 
         self.tableView_1.setModel(model)
     
-    # def sum_order(self, s_list, *args):
-    #     ss = 0
-    #     print(s_list)
-        # for s in sum_list:
-        #     ss += int(s)
-        # self.labelSum.setText(f'총 매출: {s}원')
+    def sum_order(self, s_list, *args):
+        ss = 0
+        print(s_list)
+        for s in sum_list:
+            ss += int(s)
+        self.labelSum.setText(f'총 매출: {s}원')
 
 
-    # def load_orderinfo_data(self):
-    #     query = ''
+    def load_orderinfo_data(self):
+        query = '''
+        CREATE OR REPLACE VIEW orderinfo_view AS 
+        SELECT i.orderinfo_id AS info_id
+        , i.order_id AS o_id
+        , m.menu_name	AS m_name
+        , to_char(i.price, '9,999,999') || '원' AS m_price
+        , i.count AS m_count
+        , to_char(i.price * i.count, '9,999,999') || '원' AS m_total
+        , t.order_date AS o_date
+        FROM ORDERINFO i, ORDER_TABLE t, MENU m
+        WHERE i.order_id = t.order_id
+        AND i.menu_id = m.menu_id
+        '''
+        self.cursor.execute(query)
+
+        # query = 'SELECT * FROM orderinfo_view'
+        query = 'SELECT o_id, m_name, m_price, m_count, m_total, o_date FROM orderinfo_view'
+
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+
+        if not rows:
+            print("No data found in database.")
+        else:
+            print(f"Fetched {len(rows)} rows from the database.")  # 데이터 확인
+
+
+        model2 = QStandardItemModel()
+        # model2.setHorizontalHeaderLabels(["ID", "주문번호", "메뉴", "가격", "수량", "총액", "주문날짜"])
+        model2.setHorizontalHeaderLabels(["주문번호", "메뉴", "가격", "수량", "총액", "주문날짜"])
+        for row in rows:
+            items = [QStandardItem(str(field)) for field in row]
+            model2.appendRow(items)
+
+        self.tableView_2.setModel(model2)
+
 
 
 if __name__ == '__main__':
