@@ -3,9 +3,9 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5 import uic
 
 # UI 파일 로드
-payment_form = uic.loadUiType("miniP_kiosk/ui/payment.ui")[0]
-cashPay_form = uic.loadUiType("miniP_kiosk/ui/cashPay.ui")[0]
-creditPay_form = uic.loadUiType("miniP_kiosk/ui/craditPay.ui")[0]
+payment_form = uic.loadUiType("ui/payment.ui")[0]
+cashPay_form = uic.loadUiType("ui/cashPay.ui")[0]
+creditPay_form = uic.loadUiType("ui/craditPay.ui")[0]
 
 class paymentWindow(QMainWindow, payment_form):
     def __init__(self, menu_id, parent=None):

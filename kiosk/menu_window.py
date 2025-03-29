@@ -7,7 +7,7 @@ import os
 from exPrice_window import expriceWindow
 from payment_window import paymentWindow
 
-menu_form = uic.loadUiType("miniP_kiosk/ui/menu.ui")[0]
+menu_form = uic.loadUiType("ui/menu.ui")[0]
 
 sid = 'XE'
 # host = '210.119.14.76'
@@ -22,7 +22,8 @@ class menuWindow(QMainWindow, menu_form):
         super().__init__()
         self.setupUi(self)
         self.initUI()
-        self.loadMenuData()
+        self.loadCategories()
+        # self.loadMenuData()   # 카테고리 로드한 후에 카테고리별로 실행해야돼서 뺐음
 
         #self.edit_btn = self.findChild(QPushButton, "edit_btn")
         self.home_btn.clicked.connect(self.close)
@@ -49,14 +50,14 @@ class menuWindow(QMainWindow, menu_form):
         # 결제 버튼 클릭 -> 결제 페이지로 이동
         self.pay_btn.clicked.connect(self.paymentWindow)
 
-
-    def loadMenuData(self):
-        # DB에서 메뉴 데이터를 가져와 동적으로 버튼 생성
+    # 카테고리 목록을 DB에서 가져와서 탭 동적 생성
+    def loadCategories(self):
         conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
         cursor = conn.cursor()
 
-        query = 'SELECT menu_id, menu_name, menu_info, menu_price, image FROM menu'
+        query = 'SELECT DISTINCT category FROM menu'    # 카테고리 중복 제거
         cursor.execute(query)
+        categories = [row[0] for row in cursor]  # 카테고리 목록
 
         cursor.close()
         conn.close()
@@ -67,7 +68,7 @@ class menuWindow(QMainWindow, menu_form):
         for i in range(min(tab_count, len(categories))):
             category = categories[i]
             self.setCategoryTab(i, category)
-
+            
     # 카테고리 탭에 적용용
     def setCategoryTab(self, index, category):
         """
@@ -85,12 +86,12 @@ class menuWindow(QMainWindow, menu_form):
         layout = scroll_widget.findChild(QGridLayout, f"gridLayout_{index+8}")
 
         if not layout:
-            print(f"gridLayout_{index+8} 찾을 수 없음! → 새로 생성함")
+            print(f"gridLayout_{index+8}")
             layout = QGridLayout(scroll_widget)
             scroll_widget.setLayout(layout)
             
         self.loadMenuData(category, layout)
-
+    
     # 카테고리별 메뉴를 DB에서 가져와서 버튼 동적 생성
     def loadMenuData(self, category, layout):
         # 기존 메뉴 항목 제거 (중복 추가 방지)
@@ -119,32 +120,19 @@ class menuWindow(QMainWindow, menu_form):
             row, col = divmod(i, 3)  # 3열 기준 배치
             layout.addWidget(menu_item, row, col)
 
-    # 메뉴 테이블 생성
-    # def menuTable(self, menu_data, layout):
-    #     # 기존 버튼 제거 및 동적 레이아웃 생성
-    #     grid_layout = QGridLayout(self.scrollAreaWidgetContents)  # 스크롤 영역에 레이아웃 추가
-    #     self.scrollAreaWidgetContents.setLayout(grid_layout)
-    #     grid_layout.setHorizontalSpacing(1)
-    #     grid_layout.setContentsMargins(0, 0, 0, 0)  
-
-        # 버튼 생성 및 추가
-        # for i, (menu_id, menu_name, image_filename) in enumerate(menu_data):
-        #     menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
-        #     layout.addWidget(menu_item, i // 3, i % 3)
-
     def createMenuWidget(self, menu_id, image_filename, text):
         base_dir = os.path.dirname(os.path.abspath(__file__))
         image_folder = os.path.join(base_dir, "../images/")
 
-        # image_filename이 None인 경우 기본 이미지 설정
-        if not image_filename:
-            print(f"menu_id {menu_id}의 image_filename이 None입니다. 기본 이미지를 사용합니다.")
-            image_filename = "default.png"  # 기본 이미지 파일 이름
+        # # image_filename이 None인 경우 기본 이미지 설정
+        # if not image_filename:
+        #     print(f"menu_id {menu_id}의 image_filename이 None입니다. 기본 이미지를 사용합니다.")
+        #     image_filename = "default.png"  # 기본 이미지 파일 이름
 
         image_path = os.path.normpath(os.path.join(image_folder, image_filename))
 
         # 이미지 경로 디버깅
-        print(f"이미지 경로: {image_path}")
+        # print(f"이미지 경로: {image_path}")
 
         menu_item = QWidget()
         layout = QVBoxLayout(menu_item)
@@ -160,15 +148,15 @@ class menuWindow(QMainWindow, menu_form):
             button.setIconSize(QSize(80, 80))
         else:
             print(f"이미지 로드 실패: {image_path}")
-            # 기본 이미지를 사용
-            default_image_path = os.path.normpath(os.path.join(image_folder, "default.png"))
-            pixmap = QPixmap(default_image_path)
-            if not pixmap.isNull():
-                resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                button.setIcon(QIcon(resized_pixmap))
-                button.setIconSize(QSize(80, 80))
-            else:
-                print(f"기본 이미지도 로드 실패: {default_image_path}")
+            # # 기본 이미지를 사용
+            # default_image_path = os.path.normpath(os.path.join(image_folder, "default.png"))
+            # pixmap = QPixmap(default_image_path)
+            # if not pixmap.isNull():
+            #     resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            #     button.setIcon(QIcon(resized_pixmap))
+            #     button.setIconSize(QSize(80, 80))
+            # else:
+            #     print(f"기본 이미지도 로드 실패: {default_image_path}")
 
         label = QLabel(text)
         label.setAlignment(Qt.AlignCenter)
