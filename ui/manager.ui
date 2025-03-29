@@ -17,15 +17,21 @@
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>480</y>
-      <width>251</width>
-      <height>201</height>
+      <x>590</x>
+      <y>520</y>
+      <width>271</width>
+      <height>261</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="mbttonArea">
      <item>
       <widget class="QPushButton" name="mbtn_add">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>추가</string>
        </property>
@@ -33,6 +39,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="mbtn_mod">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>수정</string>
        </property>
@@ -40,6 +52,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="mbtn_del">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>삭제</string>
        </property>
@@ -206,8 +224,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>460</y>
+      <x>150</x>
+      <y>480</y>
       <width>101</width>
       <height>16</height>
      </rect>
@@ -242,32 +260,19 @@
    <widget class="QTableWidget" name="tblMenu2">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>480</y>
+      <x>150</x>
+      <y>500</y>
       <width>321</width>
       <height>291</height>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="mbtn_back">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>710</y>
-      <width>230</width>
-      <height>50</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>되돌리기</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="verticalLayoutWidget_3">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>500</y>
-      <width>111</width>
+      <x>320</x>
+      <y>520</y>
+      <width>131</width>
       <height>141</height>
      </rect>
     </property>
@@ -342,8 +347,8 @@
    <widget class="QLabel" name="menu_image_input">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>510</y>
+      <x>170</x>
+      <y>530</y>
       <width>131</width>
       <height>131</height>
      </rect>
@@ -355,8 +360,8 @@
    <widget class="QTextEdit" name="menu_info_input">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>650</y>
+      <x>160</x>
+      <y>670</y>
       <width>271</width>
       <height>111</height>
      </rect>
@@ -372,7 +377,7 @@
      <x>0</x>
      <y>0</y>
      <width>1095</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
