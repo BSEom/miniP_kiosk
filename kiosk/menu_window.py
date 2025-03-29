@@ -5,11 +5,12 @@ from PyQt5 import uic
 import cx_Oracle as oci
 import os
 from exPrice_window import expriceWindow
+from payment_window import paymentWindow
 
-menu_form = uic.loadUiType("ui/menu.ui")[0]
+menu_form = uic.loadUiType("miniP_kiosk/ui/menu.ui")[0]
 
-sid = 'XE'
-host = '210.119.14.76'
+sid = 'ORCL'
+host = 'localhost'
 port = 1521
 username = 'kiosk'
 password = '12345'
@@ -22,9 +23,7 @@ class menuWindow(QMainWindow, menu_form):
         self.initUI()
         self.loadMenuData()
 
-        self.cart_tbl = self.findChild(QTableWidget, "cart_tbl")
-        self.quantity_spinbox = self.findChild(QSpinBox, "countBox")
-        self.edit_btn = self.findChild(QPushButton, "edit_btn")
+        #self.edit_btn = self.findChild(QPushButton, "edit_btn")
         self.home_btn.clicked.connect(self.close)
         self.allDel_btn.clicked.connect(self.allDelRow)
         
@@ -45,6 +44,10 @@ class menuWindow(QMainWindow, menu_form):
         self.edit_btn.clicked.connect(self.editRow)
         # 전체 삭제 버튼 클릭 -> 테이블 초기화
         self.all_del_btn = self.findChild(QPushButton, "all_del_btn")
+
+        # 결제 버튼 클릭 -> 결제 페이지로 이동
+        self.pay_btn.clicked.connect(self.paymentWindow)
+
 
     def loadMenuData(self):
         # DB에서 메뉴 데이터를 가져와 동적으로 버튼 생성
@@ -145,13 +148,12 @@ class menuWindow(QMainWindow, menu_form):
         else:
             print("삭제할 항목을 선택하세요.")
 
-    # 수정 버튼 클릭 시 실행되는 함수
-
     def allDelRow(self):
         # 테이블 초기화 (모든 행 삭제)
         self.cart_tbl.setRowCount(0)
 
     def editRow(self):
+        # 수량 변경
         selected_row = self.cart_tbl.currentRow()  # 현재 선택된 행
         if selected_row >= 0:  # 선택된 행이 있을 때만 수정
             menu_name = self.cart_tbl.item(selected_row, 0).text()  # 메뉴명 가져오기
@@ -194,3 +196,98 @@ class menuWindow(QMainWindow, menu_form):
             confirm_btn.clicked.connect(on_confirm)
             
             dialog.exec_()  # 다이얼로그 실행
+
+    def paymentWindow(self):
+        try:
+            # DB 연결
+            conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
+            cursor = conn.cursor()
+
+            # 테이블 데이터 가져오기
+            row_count = self.cart_tbl.rowCount()
+            if row_count == 0:
+                QMessageBox.warning(self, "경고", "결제할 메뉴가 없습니다.")
+                return
+
+            # 새로운 order_id 생성
+            cursor.execute("SELECT ORDER_SEQ.NEXTVAL FROM dual")  # order_id를 생성하는 시퀀스
+            order_id = cursor.fetchone()[0]
+
+            # 전체 주문 가격 계산
+            total_order_price = 0
+            for row in range(row_count):
+                menu_name = self.cart_tbl.item(row, 0).text()  # 메뉴명
+                quantity = int(self.cart_tbl.item(row, 1).text())  # 수량
+                price_text = self.cart_tbl.item(row, 2).text()  # 가격 텍스트
+
+                # 가격에서 "원", "," 및 공백을 제거하고 숫자로 변환
+                try:
+                    menu_price = int(price_text.replace("원", "").replace(",", "").strip())
+                except ValueError:
+                    raise ValueError(f"가격 '{price_text}'을 숫자로 변환할 수 없습니다.")
+
+                total_price = menu_price  # 총 가격 계산
+                total_order_price += total_price  # 전체 주문 가격에 더하기
+
+            # order 테이블에 데이터 삽입
+            cursor.execute("""
+                INSERT INTO ORDER_TABLE (ORDER_ID, ORDER_PRICE, ORDER_DATE)
+                VALUES (:order_id, :order_price, SYSDATE)
+            """, {"order_id": order_id, "order_price": total_order_price})
+
+            # orderinfo 테이블에 데이터 삽입
+            for row in range(row_count):
+                menu_name = self.cart_tbl.item(row, 0).text()  # 메뉴명
+                quantity = int(self.cart_tbl.item(row, 1).text())  # 수량
+                price_text = self.cart_tbl.item(row, 2).text()  # 가격 텍스트
+
+                # 가격에서 "원", "," 및 공백을 제거하고 숫자로 변환
+                try:
+                    menu_price = int(price_text.replace("원", "").replace(",", "").strip())
+                except ValueError:
+                    raise ValueError(f"가격 '{price_text}'을 숫자로 변환할 수 없습니다.")
+
+                total_price = menu_price * quantity  # 총 가격 계산
+
+                # 메뉴명을 이용해 MENU_ID 가져오기
+                cursor.execute("SELECT MENU_ID FROM MENU WHERE MENU_NAME = :menu_name", {"menu_name": menu_name})
+                result = cursor.fetchone()
+
+                if result:
+                    menu_id = result[0]  # MENU_ID 가져오기
+
+                    # orderinfo_id 생성
+                    cursor.execute("SELECT ORDERINFO_SEQ.NEXTVAL FROM dual")
+                    orderinfo_id = cursor.fetchone()[0]
+
+                    # orderinfo 테이블에 데이터 삽입
+                    cursor.execute("""
+                        INSERT INTO ORDERINFO (ORDERINFO_ID, ORDER_ID, MENU_ID, PRICE, COUNT)
+                        VALUES (:orderinfo_id, :order_id, :menu_id, :price, :count)
+                    """, {
+                        "orderinfo_id": orderinfo_id,
+                        "order_id": order_id,
+                        "menu_id": menu_id,
+                        "price": menu_price,
+                        "count": quantity
+                    })
+
+            # 트랜잭션 커밋
+            conn.commit()
+
+            QMessageBox.information(self, "성공", "주문이 완료되었습니다.")
+            self.payment_window = paymentWindow(self)
+            self.payment_window.show()
+
+        except Exception as e:
+            conn.rollback()
+            QMessageBox.critical(self, "오류", f"주문 처리 중 오류가 발생했습니다: {str(e)}")
+
+        finally:
+            cursor.close()
+            conn.close()
+
+
+
+
+
