@@ -139,13 +139,13 @@ class menuWindow(QMainWindow, menu_form):
         layout.setAlignment(Qt.AlignCenter)
 
         button = QPushButton()
-        button.setFixedSize(95, 95)
+        button.setFixedSize(115, 115)
         pixmap = QPixmap(image_path)
 
         if not pixmap.isNull():
             resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             button.setIcon(QIcon(resized_pixmap))
-            button.setIconSize(QSize(80, 80))
+            button.setIconSize(QSize(100, 100))
         else:
             print(f"이미지 로드 실패: {image_path}")
             # # 기본 이미지를 사용
@@ -161,7 +161,7 @@ class menuWindow(QMainWindow, menu_form):
         label = QLabel(text)
         label.setAlignment(Qt.AlignCenter)
         label.setWordWrap(True)
-        label.setFixedSize(95, 50)
+        label.setFixedSize(115, 55)
 
         layout.addWidget(button)
         layout.addWidget(label)

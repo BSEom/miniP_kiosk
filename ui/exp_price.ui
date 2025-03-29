@@ -49,6 +49,9 @@
       <height>31</height>
      </rect>
     </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
    </widget>
    <widget class="QLabel" name="count_label">
     <property name="geometry">
@@ -66,7 +69,7 @@
    <widget class="QPushButton" name="add_btn">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>30</x>
       <y>250</y>
       <width>75</width>
       <height>23</height>
@@ -145,7 +148,7 @@
      <x>0</x>
      <y>0</y>
      <width>237</width>
-     <height>18</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
