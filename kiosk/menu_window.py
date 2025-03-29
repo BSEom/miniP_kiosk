@@ -9,7 +9,8 @@ from exPrice_window import expriceWindow
 menu_form = uic.loadUiType("ui/menu.ui")[0]
 
 sid = 'XE'
-host = '210.119.14.76'
+host = 'localhost'
+# host = '210.119.14.76'
 port = 1521
 username = 'kiosk'
 password = '12345'

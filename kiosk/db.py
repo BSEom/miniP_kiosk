@@ -2,7 +2,8 @@ import cx_Oracle as oci
 
 # DB 연결 설정 변수
 sid = 'XE'
-host = '127.0.0.1'
+host = 'localhost'
+# host = '127.0.0.1'
 port = 1521
 username = 'kiosk'
 password = '12345'

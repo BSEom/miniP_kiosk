@@ -7,7 +7,8 @@ expPrice_form = uic.loadUiType("ui/exp_price.ui")[0]
 
 # DB 연결 정보
 sid = 'XE'
-host = '210.119.14.76'
+host = 'localhost'
+# host = '210.119.14.76'
 port = 1521
 username = 'kiosk'
 password = '12345'
