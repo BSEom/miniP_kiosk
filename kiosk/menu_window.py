@@ -252,7 +252,7 @@ class menuWindow(QMainWindow, menu_form):
                 return
 
             # 새로운 order_id 생성
-            cursor.execute("SELECT ORDER_SEQ.NEXTVAL FROM dual")  # order_id를 생성하는 시퀀스
+            cursor.execute("SELECT ORDER_ID_SEQ.NEXTVAL FROM dual")  # order_id를 생성하는 시퀀스
             order_id = cursor.fetchone()[0]
 
             # 전체 주문 가격 계산
@@ -299,7 +299,7 @@ class menuWindow(QMainWindow, menu_form):
                     menu_id = result[0]  # MENU_ID 가져오기
 
                     # orderinfo_id 생성
-                    cursor.execute("SELECT ORDERINFO_SEQ.NEXTVAL FROM dual")
+                    cursor.execute("SELECT ORDERINFO_ID_SEQ.NEXTVAL FROM dual")
                     orderinfo_id = cursor.fetchone()[0]
 
                     # orderinfo 테이블에 데이터 삽입
