@@ -49,7 +49,7 @@ class ManagerWindow(QMainWindow):
         self.cursor.execute(query, (menu_name,)) 
         return self.cursor.fetchone()[0] > 0
 
-    # tblMenu(조회페이지)에 메뉴 데이터 로드
+    # tblMenu(조회페이지)
     def load_menu_data(self, category=None, menu_id=None, menu_name=None, menu_price=None):
         # 필터링된 데이터 준비
         filtered_data = self.menu_data
@@ -70,12 +70,12 @@ class ManagerWindow(QMainWindow):
         if menu_price:
             filtered_data = [menu for menu in filtered_data if str(menu['price']) == menu_price]
 
-        # 테이블 데이터 설정
+        # 테이블 컬럼 지정
         self.tblMenu.setRowCount(len(filtered_data))
         self.tblMenu.setColumnCount(7)
         self.tblMenu.setHorizontalHeaderLabels(["Status", "ID", "Name", "Info", "Price", "Category", "Image"])
 
-        # 조회 페이지에 행에 값 넣어주기
+        # 조회 페이지 행에 값 넣어주기
         for i in range(len(filtered_data)):
             menu = filtered_data[i]
             status = "등록됨" if self.menu_exists(menu['name']) else "등록안됨"
@@ -164,43 +164,39 @@ class ManagerWindow(QMainWindow):
 
     # 수정 버튼 클릭 했을 때(상태 페이지에서 값 가져옴)
     def update_menu(self):
-        selected_row = self.tblMenu.currentRow()
-        if selected_row >= 0:
-            menu_id = self.menu_id_input.text() 
-            menu_name = self.menu_name_input.text()
-            menu_info = self.menu_info_input.toPlainText()
-            menu_price = self.menu_price_input.text()
-            category = self.category_combobox.currentText()
-            image_name = self.menu_image_input_name.text()
+        menu_id = self.menu_id_input.text() 
+        menu_name = self.menu_name_input.text()
+        menu_info = self.menu_info_input.toPlainText()
+        menu_price = self.menu_price_input.text()
+        category = self.category_combobox.currentText()
+        image_name = self.menu_image_input_name.text()
 
-            try:
-                self.cursor.execute(
-                    """
-                    UPDATE MENU
-                    SET menu_name = :1, menu_info = :2, menu_price = :3, category = :4, image = :5
-                    WHERE menu_id = :6
-                    """, (menu_name, menu_info, menu_price, category, image_name, menu_id)) 
-                self.conn.commit()
-                self.load_menu_data()
-                QMessageBox.information(self, "성공", "수정 성공!")
-            except Exception as e:
-                print(f"오류 발생: {e}")
-                QMessageBox.critical(self, "오류", "수정 중 오류가 발생했습니다!")
+        try:
+            self.cursor.execute(
+                """
+                UPDATE MENU
+                SET menu_name = :1, menu_info = :2, menu_price = :3, category = :4, image = :5
+                WHERE menu_id = :6
+                """, (menu_name, menu_info, menu_price, category, image_name, menu_id)) 
+            self.conn.commit()
+            self.load_menu_data()
+            QMessageBox.information(self, "성공", "수정 성공!")
+        except Exception as e:
+            print(f"오류 발생: {e}")
+            QMessageBox.critical(self, "오류", "수정 중 오류가 발생했습니다!")
 
     # 삭제 버튼 클릭했을 때(상태 페이지에서 값 가져옴)
     def delete_menu(self):
-        selected_row = self.tblMenu.currentRow()
-        if selected_row >= 0:
-            menu_id = self.menu_id_input.text()  
+        menu_name = self.menu_name_input.text()
+        if menu_name:
             try:
-                self.cursor.execute("DELETE FROM MENU WHERE menu_id = :1", (menu_id,))
+                self.cursor.execute("DELETE FROM MENU WHERE menu_name = :1", (menu_name,))
                 self.conn.commit()
                 self.load_menu_data()
                 QMessageBox.information(self, "성공", "삭제 성공!")
             except Exception as e:
                 print(f"오류 발생: {e}")
-                QMessageBox.critical(self, "오류", "삭제 중 오류가 발생했습니다!")
-
+                QMessageBox.critical(self, "오류","삭제 중 오류가 발생했습니다!")
 
 
 
