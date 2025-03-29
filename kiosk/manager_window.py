@@ -140,9 +140,6 @@ class ManagerWindow(QMainWindow):
         menu_price = self.menu_price_input.text()
         category = self.category_combobox.currentText()
         image_name = self.menu_image_input_name.text() 
-
-        # 입력 값 확인
-        print(f"입력 값: {menu_id}, {menu_name}, {menu_info}, {menu_price}, {category}, {image_name}")
         
         if menu_id and menu_name and menu_info and menu_price and category and image_name:
             if not self.menu_exists(menu_name):
