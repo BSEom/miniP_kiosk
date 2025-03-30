@@ -84,16 +84,6 @@
        </item>
        <item>
         <property name="text">
-         <string>인기 메뉴</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>시즌 메뉴</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>커피</string>
         </property>
        </item>
@@ -260,21 +250,6 @@
       <widget class="QComboBox" name="category_combobox">
        <item>
         <property name="text">
-         <string>선택</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>인기 메뉴</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>시즌 메뉴</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>커피</string>
         </property>
        </item>
@@ -303,21 +278,21 @@
      <item>
       <widget class="QLineEdit" name="menu_id_input">
        <property name="placeholderText">
-        <string>메뉴 ID</string>
+        <string>⭐ 메뉴 ID</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="menu_name_input">
        <property name="placeholderText">
-        <string>메뉴 이름</string>
+        <string>⭐ 메뉴 이름</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="menu_price_input">
        <property name="placeholderText">
-        <string>메뉴 가격</string>
+        <string>⭐ 메뉴 가격</string>
        </property>
       </widget>
      </item>
@@ -346,20 +321,20 @@
      </rect>
     </property>
     <property name="placeholderText">
-     <string>메뉴 설명</string>
+     <string>⭐ 메뉴 설명</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="menu_image_input_name">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>210</x>
       <y>510</y>
-      <width>113</width>
+      <width>131</width>
       <height>21</height>
      </rect>
     </property>
     <property name="placeholderText">
-     <string>이미지 이름</string>
+     <string>⭐ 이미지 이름</string>
     </property>
    </widget>
    <widget class="QPushButton" name="stats_btn">

@@ -7,3 +7,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = mainWindow()
     app.exec_()
+
