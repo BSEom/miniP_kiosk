@@ -35,7 +35,7 @@ class paymentWindow(QMainWindow, payment_form):
         self.credit_window.setWindowTitle("카드 결제")
         self.credit_window.show()
 
-        icon_path = 'miniP_kiosk/img/creditPay.png'
+        icon_path = 'img\creditPay.png'
         pixmap = QPixmap(icon_path)
         if not pixmap.isNull():
             self.credit_ui.label.setPixmap(pixmap)  # 'label'은 카드 창의 QLabel 이름
