@@ -47,7 +47,9 @@ class managerFunction(QWidget):
         # 초기데이터 로드
         self.load_order_data()
         self.load_orderinfo_data()
+        self.load_popular_manu()
 
+    # 
     def initUI(self):
         self.setWindowTitle('Cafe Kiosk (관리자)')
         self.setWindowIcon(QIcon('img/coffee-cup.png'))
@@ -75,11 +77,11 @@ class managerFunction(QWidget):
             self.highlight_range(self.start_date, self.end_date)
         else:
             # 선택 초기화
+            self.reset_highlight(self, date)
             self.start_date = date
             self.end_date = None
-            self.reset_highlight(self, date)
-            # self.highlight_date(date, QColor("blue"))
-            # self.label.setText(f"시작 날짜: {date.toString('yyyy-MM-dd')}")
+            self.highlight_date(date, QColor("blue"))
+            self.labelStatus.setText(f"시작 날짜: {date.toString('yyyy-MM-dd')}")
 
     def highlight_date(self, date, color):
         """단일 날짜를 강조 표시"""
@@ -129,6 +131,8 @@ class managerFunction(QWidget):
         for row in rows:
             sum_list.append(row[1].replace(',', '').replace('원', '').strip())
             items = [QStandardItem(str(field)) for field in row]
+            for index in [0, 1]: 
+                items[index].setTextAlignment(Qt.AlignCenter)
             model.appendRow(items)
 
         ss = 0
@@ -165,9 +169,10 @@ class managerFunction(QWidget):
         model.setHorizontalHeaderLabels(["주문번호", "주문금액", "주문날짜"])
         sum_list = []
         for row in rows:
-            print(row, type(row), '\n')
             sum_list.append(row[1].replace(',', '').replace('원', '').strip())
             items = [QStandardItem(str(field)) for field in row]
+            for index in [0, 1]: 
+                items[index].setTextAlignment(Qt.AlignCenter)
             model.appendRow(items)
 
         print(sum_list)
@@ -184,7 +189,7 @@ class managerFunction(QWidget):
 
         query = '''
         SELECT * FROM order_view WHERE o_date BETWEEN to_date('
-        ''' + g_start + "', 'yyyy-MM-dd') AND to_date('" +  g_end + "', 'yyyy-MM-dd')"
+        ''' + g_start + "', 'yyyy-MM-dd') AND to_date('" +  g_end + " 23:59:59', 'yyyy-MM-dd HH24:MI:SS')"
 
         print(query)
 
@@ -204,6 +209,8 @@ class managerFunction(QWidget):
         for row in rows:
             sum_list.append(row[1].replace(',', '').replace('원', '').strip())
             items = [QStandardItem(str(field)) for field in row]
+            for index in [0, 1]: 
+                items[index].setTextAlignment(Qt.AlignCenter)
             model.appendRow(items)
 
         ss = 0
@@ -213,12 +220,6 @@ class managerFunction(QWidget):
 
         self.tableView_1.setModel(model)
     
-    def sum_order(self, s_list, *args):
-        ss = 0
-        print(s_list)
-        for s in sum_list:
-            ss += int(s)
-        self.labelSum.setText(f'총 매출: {s}원')
 
 
     def load_orderinfo_data(self):
@@ -254,9 +255,39 @@ class managerFunction(QWidget):
         model2.setHorizontalHeaderLabels(["주문번호", "메뉴", "가격", "수량", "총액", "주문날짜"])
         for row in rows:
             items = [QStandardItem(str(field)) for field in row]
+            for index in [0, 2, 3, 4]: 
+                items[index].setTextAlignment(Qt.AlignCenter)
             model2.appendRow(items)
 
         self.tableView_2.setModel(model2)
+
+    def load_popular_manu(self):
+        query = '''
+        SELECT m_name
+            , sum(m_count) AS cnt
+        FROM orderinfo_view
+        GROUP BY m_name 
+        ORDER BY cnt DESC
+        '''
+
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+
+        if not rows:
+            print("No data found in database.")
+        else:
+            print(f"Fetched {len(rows)} rows from the database.")  # 데이터 확인
+
+
+        model3 = QStandardItemModel()
+        model3.setHorizontalHeaderLabels(["메뉴", "총 판매수"])
+        for row in rows:
+            items = [QStandardItem(str(field)) for field in row]
+            items[1].setTextAlignment(Qt.AlignCenter)
+            model3.appendRow(items)
+
+        self.tableView_3.setModel(model3)
+        self.tableView_3.resizeColumnsToContents()
 
 
 

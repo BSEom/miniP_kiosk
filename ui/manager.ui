@@ -89,11 +89,6 @@
        </item>
        <item>
         <property name="text">
-         <string>시즌 메뉴</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>커피</string>
         </property>
        </item>
@@ -270,11 +265,6 @@
        </item>
        <item>
         <property name="text">
-         <string>시즌 메뉴</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>커피</string>
         </property>
        </item>
@@ -373,19 +363,6 @@
     </property>
     <property name="text">
      <string>매출 조회</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="change_btn">
-    <property name="geometry">
-     <rect>
-      <x>970</x>
-      <y>750</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>이동</string>
     </property>
    </widget>
   </widget>
