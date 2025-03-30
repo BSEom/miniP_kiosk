@@ -4,14 +4,16 @@ import os
 import shutil
 import cx_Oracle as oci
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QMessageBox
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
+from manager_function import managerFunction
 
 class managerWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         loadUi("ui/manager.ui", self)  # UI 로드
+        self.initUI()
 
         # 시작 준비!
         self.conn = self.get_db_connection()    
@@ -24,6 +26,7 @@ class managerWindow(QMainWindow):
         self.mbtn_mod.clicked.connect(self.update_menu)
         self.mbtn_del.clicked.connect(self.delete_menu)
         self.tblMenu.doubleClicked.connect(self.double_click_event)
+        self.stats_btn.clicked.connect(self.managerFunction)
         self.load_menu_data() # 조회페이지
 
     # 디비 연결
@@ -34,6 +37,11 @@ class managerWindow(QMainWindow):
         username = 'kiosk'
         password = '12345'
         return oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
+    
+    # 상태바 이름, Icon
+    def initUI(self):
+        self.setWindowTitle('Cafe Kiosk (관리자)')
+        self.setWindowIcon(QIcon('img/coffee-cup.png'))
 
     # menu_data.json 파일 끌고오기
     def load_json_data(self):
@@ -269,6 +277,9 @@ class managerWindow(QMainWindow):
         self.menu_price_input.clear()
         self.menu_image_input_name.clear()
 
+    def managerFunction(self):
+        self.window_5 = managerFunction()
+        self.window_5.show()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
