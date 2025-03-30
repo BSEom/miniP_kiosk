@@ -174,9 +174,9 @@ class managerWindow(QMainWindow):
         menu_info = self.menu_info_input.toPlainText()
         menu_price = self.menu_price_input.text()
         category = self.category_combobox.currentText()
-        image_name = self.menu_image_input_name.text() 
+        image_name = self.menu_image_input_name.text()
         
-        if not all([menu_id, menu_name, menu_info, menu_price, category]):
+        if not all([menu_id, menu_name, menu_info, menu_price, category, image_name]):
             QMessageBox.warning(self, "입력 오류", "⭐ 부분은 필수항목입니다. 모두 입력해주세요.")
             return
         
@@ -186,6 +186,7 @@ class managerWindow(QMainWindow):
 
         # 메뉴 정보 딕셔너리로 구성
         new_menu = {
+            'id' : menu_id,
             'name': menu_name,
             'info': menu_info,
             'price': menu_price,
@@ -195,6 +196,13 @@ class managerWindow(QMainWindow):
         try:
             # JSON에 새로운 메뉴 추가
             self.add_to_json(new_menu)
+
+            query = """
+            INSERT INTO MENU (menu_id, menu_name, menu_info, menu_price, category, image)
+            VALUES (:1, :2, :3, :4, :5, :6)
+            """
+            self.cursor.execute(query, (menu_id, menu_name, menu_info, menu_price, category, image_name))
+            self.conn.commit()
 
             # 추가 후 값 클리어
             self.clear_inputs()
@@ -219,8 +227,17 @@ class managerWindow(QMainWindow):
             return
 
         try:
-                # 기존 메뉴 수정
+            # json에 등록된 기존 메뉴 수정
             self.update_json(menu_id, menu_name, menu_info, menu_price, category, image_name)
+
+            # 디비 수정
+            query = """
+            UPDATE MENU
+            SET menu_name = :1, menu_info = :2, menu_price = :3, category = :4, image = :5
+            WHERE menu_id = :6
+            """
+            self.cursor.execute(query, (menu_name, menu_info, menu_price, category, image_name, menu_id))
+            self.conn.commit()
 
             # 수정 후, UI 업데이트
             self.clear_inputs()

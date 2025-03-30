@@ -332,14 +332,14 @@
    <widget class="QLineEdit" name="menu_image_input_name">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>210</x>
       <y>510</y>
-      <width>113</width>
+      <width>131</width>
       <height>21</height>
      </rect>
     </property>
     <property name="placeholderText">
-     <string>이미지 이름</string>
+     <string>⭐ 이미지 이름</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
@@ -362,7 +362,7 @@
      <x>0</x>
      <y>0</y>
      <width>1095</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
