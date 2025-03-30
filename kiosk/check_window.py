@@ -12,7 +12,7 @@ class checkWindow(QDialog, check_form):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Cafe Kiosk")
-        self.setWindowIcon(QIcon("ui\check.ui"))
+        self.setWindowIcon(QIcon("img\coffee-cup.png"))
 
         self.check_btn.clicked.connect(self.check_btnClick)
 
