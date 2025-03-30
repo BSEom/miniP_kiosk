@@ -61,12 +61,6 @@ class expriceWindow(QMainWindow, expPrice_form):
     def add_btn_clicked(self):
         # 수량 선택 후 추가 버튼 클릭 시 동작
         quantity = int(self.countBox.value())  # SpinBox에서 수량 가져오기
-
-        # 수량이 0이면 메뉴 추가를 하지 않도록      -- 디폴트값을 1로 설정해줘서 필요없을듯!! -정민
-        # if quantity == 0:
-        #     QMessageBox.warning(self, "경고", "수량이 0이면 메뉴를 추가할 수 없습니다.")
-        #     return  # 메뉴 추가를 중단하고 함수 종료
-
         menu_name = self.menu_name.text()
         menu_price_text = self.price_label.text()  # 가격 레이블에서 가격 텍스트 가져오기
 
@@ -76,7 +70,7 @@ class expriceWindow(QMainWindow, expPrice_form):
         # 수량과 가격을 곱해서 총 가격 계산
         total_price = menu_price * quantity
 
-        # 부모 창에서 테이블에 데이터를 추가
+        # 테이블에 데이터를 추가
         self.window_4 = self.parent()  # 부모 창 가져오기
         self.window_4.addMenuTable(menu_name, quantity, total_price)  # 메뉴명, 수량, 계산된 총 가격 추가
 
