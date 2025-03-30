@@ -49,13 +49,13 @@ class managerFunction(QWidget):
         self.load_orderinfo_data()
         self.load_popular_manu()
 
-    # 
+    # 창 UI
     def initUI(self):
         self.setWindowTitle('Cafe Kiosk (관리자)')
         self.setWindowIcon(QIcon('img/coffee-cup.png'))
 
     def select_date(self, date):
-        """날짜 선택 로직"""
+
         if self.start_date is None:
             # 첫 번째 날짜 선택
             self.start_date = date
@@ -83,12 +83,13 @@ class managerFunction(QWidget):
             self.highlight_date(date, QColor("blue"))
             self.labelStatus.setText(f"시작 날짜: {date.toString('yyyy-MM-dd')}")
 
+    # 날짜 강조
     def highlight_date(self, date, color):
-        """단일 날짜를 강조 표시"""
         format = QTextCharFormat()
         format.setBackground(color)
         self.calendar.setDateTextFormat(date, format)
 
+    # 날짜 범위 강조
     def highlight_range(self, start, end):
         """날짜 범위를 강조 표시"""
         if start > end:
@@ -102,14 +103,14 @@ class managerFunction(QWidget):
             self.calendar.setDateTextFormat(current, format)
             current = current.addDays(1)
 
+    # 날짜 초기화
     def reset_highlight(self, *args):
-        """날짜 강조 초기화"""
         self.start_date = None
         self.end_date = None
         self.calendar.setDateTextFormat(QDate(), QTextCharFormat())
         self.labelStatus.setText(f"날짜를 선택해 주세요.")
 
-
+    # 초기화 버튼 동작
     def reset_fn(self):
         self.reset_highlight(self)
 
@@ -143,6 +144,7 @@ class managerFunction(QWidget):
         self.tableView_1.setModel(model)
 
 
+    # 매출 표시
     def load_order_data(self):
         
         query = '''
@@ -183,6 +185,7 @@ class managerFunction(QWidget):
         self.labelSum.setText(f'총 매출: {ss:,}원')
         self.tableView_1.setModel(model)
 
+    # 기간 매출 갱신
     def update_order_data(self):
         print(g_start)
         print(g_end)
@@ -221,7 +224,7 @@ class managerFunction(QWidget):
         self.tableView_1.setModel(model)
     
 
-
+    # 주문내역 표시
     def load_orderinfo_data(self):
         query = '''
         CREATE OR REPLACE VIEW orderinfo_view AS 
@@ -251,7 +254,6 @@ class managerFunction(QWidget):
 
 
         model2 = QStandardItemModel()
-        # model2.setHorizontalHeaderLabels(["ID", "주문번호", "메뉴", "가격", "수량", "총액", "주문날짜"])
         model2.setHorizontalHeaderLabels(["주문번호", "메뉴", "가격", "수량", "총액", "주문날짜"])
         for row in rows:
             items = [QStandardItem(str(field)) for field in row]
@@ -261,6 +263,7 @@ class managerFunction(QWidget):
 
         self.tableView_2.setModel(model2)
 
+    # 인기 항목 표시
     def load_popular_manu(self):
         query = '''
         SELECT m_name
