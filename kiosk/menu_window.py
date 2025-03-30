@@ -297,6 +297,8 @@ class menuWindow(QMainWindow, menu_form):
 
                 if result:
                     menu_id = result[0]  # MENU_ID 가져오기
+                    menu_price = int(price_text.replace("원", "").replace(",","").strip())
+                    one_menu = menu_price / quantity
 
                     # orderinfo_id 생성
                     cursor.execute("SELECT ORDERINFO_ID_SEQ.NEXTVAL FROM dual")
@@ -310,14 +312,16 @@ class menuWindow(QMainWindow, menu_form):
                         "orderinfo_id": orderinfo_id,
                         "order_id": order_id,
                         "menu_id": menu_id,
-                        "price": menu_price,
+                        "price": one_menu,
                         "count": quantity
                     })
 
             # 트랜잭션 커밋
             conn.commit()
 
-            QMessageBox.information(self, "성공", "주문이 완료되었습니다.")
+            # QMessageBox.information(self, "성공", "주문이 완료되었습니다.")
+            # 테이블 초기화(장바구니 비우기)
+            self.allDelRow()
             self.payment_window = paymentWindow(self)
             self.payment_window.show()
 
