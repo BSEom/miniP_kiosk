@@ -22,7 +22,7 @@ def get_db_connection():
 class managerFunction(QWidget):
     def __init__(self):
         super().__init__()
-        loadUi("ui/cal.ui", self)  # Qt Designer UI 로드
+        loadUi("ui/stats.ui", self)  # Qt Designer UI 로드
         self.initUI()
 
         # DB 연결
@@ -49,7 +49,7 @@ class managerFunction(QWidget):
         self.load_orderinfo_data()
 
     def initUI(self):
-        self.setWindowTitle('Cafe Kiosk')
+        self.setWindowTitle('Cafe Kiosk (관리자)')
         self.setWindowIcon(QIcon('img/coffee-cup.png'))
 
     def select_date(self, date):
