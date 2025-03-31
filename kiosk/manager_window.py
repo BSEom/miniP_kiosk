@@ -32,7 +32,7 @@ class managerWindow(QMainWindow):
     # 디비 연결
     def get_db_connection(self):
         sid = 'XE'
-        host = '210.119.14.76'
+        host = 'localhost'
         port = 1521
         username = 'kiosk'
         password = '12345'
@@ -52,11 +52,12 @@ class managerWindow(QMainWindow):
             QMessageBox.critical(self, "오류", "JSON 파일이 손상되었거나 존재하지 않습니다. 프로그램을 종료합니다.")
             sys.exit()
         
-    # 메뉴 존재 여부 확인(중복 등록 방지-추가버튼에서 사용함)
-    def menu_exists(self, menu_name):
-        query = "SELECT COUNT(*) FROM MENU WHERE menu_name = :1" 
-        self.cursor.execute(query, (menu_name,)) 
-        return self.cursor.fetchone()[0] > 0
+    # 메뉴 이름, 아이디 존재 여부 확인(중복 등록 방지)
+    def menu_exists(self, menu_name, menu_id=None):
+        # 메뉴 이름과 아이디가 모두 중복되는지 확인
+        query = "SELECT COUNT(*) FROM MENU WHERE menu_name = :1 OR menu_id = :2"
+        self.cursor.execute(query, (menu_name, menu_id)) 
+        return self.cursor.fetchone()[0] > 0  # 중복 있으면 True 반환
 
     # tblMenu(조회페이지)
     def load_menu_data(self, category=None, menu_id=None, menu_name=None, menu_price=None):
@@ -159,20 +160,6 @@ class managerWindow(QMainWindow):
             self.write_json_file(menu_data)
             self.menu_data = menu_data
 
-    # 메뉴 수정
-    def update_json(self, menu_name, menu_info, menu_price, category, image_name):
-        menu_data = self.read_json_file()
-
-        for menu in menu_data:
-            if menu['name'] == menu_name:
-                menu['info'] = menu_info
-                menu['price'] = menu_price
-                menu['category'] = category
-                menu['image'] = image_name
-                break
-
-        self.write_json_file(menu_data)
-
 
     # 추가 버튼 클릭했을 때(상태 페이지에서 값 끌고옴)
     def add_menu(self):
@@ -187,8 +174,9 @@ class managerWindow(QMainWindow):
             QMessageBox.warning(self, "입력 오류", "⭐ 부분은 필수항목입니다. 모두 입력해주세요.")
             return
         
-        if self.menu_exists(menu_name):
-            QMessageBox.warning(self, "중복 오류", f"{menu_name}은(는) 이미 존재하는 메뉴입니다!")
+        # 중복 체크 추가
+        if self.menu_exists(menu_name, menu_id):
+            QMessageBox.warning(self, "중복 오류", f"아이디 {menu_id} 또는 메뉴명 {menu_name}은 이미 존재합니다!")
             return
 
         # 메뉴 정보 딕셔너리로 구성
@@ -221,8 +209,35 @@ class managerWindow(QMainWindow):
 
         self.load_menu_data()
 
-    # 수정 버튼 클릭 했을 때(상태 페이지에서 값 가져옴)
+    # 메뉴 수정
+    def update_json(self, menu_id, menu_name, menu_info, menu_price, category, image_name):
+        menu_data = self.read_json_file()
+        found = False
+
+        for menu in menu_data:
+            if menu['name'] == menu_name:  # menu_name 기준으로 검색
+                menu['id'] = int(menu_id)
+                menu['name'] = menu_name
+                menu['info'] = menu_info
+                menu['price'] = int(menu_price)  # 숫자 형태 유지
+                menu['category'] = category
+                menu['image'] = image_name
+                found = True
+                break  # 수정 후 반복문 종료
+
+        if found:
+            self.write_json_file(menu_data)
+        else:
+            return False  # 메뉴를 찾지 못했을 때 False 반환
+
+    # 수정 버튼 클릭했을 때(상태 페이지에서 값 가져옴)
     def update_menu(self):
+        selected_row = self.tblMenu.currentRow()
+        if selected_row < 0:
+            QMessageBox.warning(self, "선택오류", "조회페이지에서 수정할 메뉴를 먼저 선택해주세요")
+            return
+        
+        # 상태 페이지에서 가져온 값
         menu_id = self.menu_id_input.text() 
         menu_name = self.menu_name_input.text()
         menu_info = self.menu_info_input.toPlainText()
@@ -230,29 +245,45 @@ class managerWindow(QMainWindow):
         category = self.category_combobox.currentText()
         image_name = self.menu_image_input_name.text()
 
+        # 메뉴명으로 찾기
+        current_menu_name = self.tblMenu.item(selected_row, 2).text()
+
+        if menu_name != current_menu_name:
+            QMessageBox.warning(self, "수정 불가", "메뉴명은 수정할 수 없습니다.")
+            return
+
         if not all([menu_id, menu_name, menu_info, menu_price, category, image_name]):
             QMessageBox.warning(self, "입력 오류", "⭐ 부분은 필수항목입니다. 모두 입력해주세요.")
             return
+        
+        # JSON에서 해당 menu_name 찾기
+        if not self.update_json(menu_id, menu_name, menu_info, menu_price, category, image_name):
+            QMessageBox.warning(self, "수정 오류", "조회페이지에 없는 음료입니다.\n새로운 메뉴는 추가 버튼을 눌려주세요.")
+            return
 
         try:
-            # json에 등록된 기존 메뉴 수정
-            self.update_json(menu_id, menu_name, menu_info, menu_price, category)
+            # JSON에 등록된 기존 메뉴 수정
+            self.update_json(menu_id, menu_name, menu_info, menu_price, category, image_name)
 
-            # 디비 수정
+            # DB 수정
             query = """
             UPDATE MENU
             SET menu_name = :1, menu_info = :2, menu_price = :3, category = :4, image = :5
-            WHERE menu_id = :6
+            WHERE menu_name = :6  # 메뉴명 기준으로 수정
             """
-            self.cursor.execute(query, (menu_name, menu_info, menu_price, category, image_name, menu_id))
+            self.cursor.execute(query, (menu_name, menu_info, menu_price, category, image_name, menu_name))
             self.conn.commit()
 
             # 수정 후, UI 업데이트
             self.clear_inputs()
+
+            self.load_menu_data()
+
             QMessageBox.information(self, "성공", "수정 성공!")
         except Exception as e:
             print(f"오류 발생: {e}")
             QMessageBox.critical(self, "오류", f"수정 중 오류가 발생했습니다: {e}")
+
 
 
     # 삭제 버튼 클릭했을 때(상태 페이지에서 값 가져옴)
