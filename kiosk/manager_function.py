@@ -4,8 +4,8 @@ from PyQt5.uic import loadUi
 from PyQt5.QtGui import QIcon
 import cx_Oracle as oci
 from PyQt5.QtCore import Qt, QDate
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QTextCharFormat, QColor
-
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QTextCharFormat, QColor, QPixmap
+import chart_ex
 
 
 # DB 연결 함수
@@ -34,6 +34,8 @@ class managerFunction(QWidget):
         self.labelStatus.setText(f"날짜를 선택해 주세요.")
         self.labelSum = self.findChild(QLabel, "labelSum")
         self.labelSum.setText(f"합계")
+        self.labelChart = self.findChild(QLabel, "labelChart")
+
         
         self.start_date = None
         self.end_date = None
@@ -281,6 +283,14 @@ class managerFunction(QWidget):
         else:
             print(f"Fetched {len(rows)} rows from the database.")  # 데이터 확인
 
+        print(rows, type(rows), '\n')
+        chart_ex.img_chart(rows)
+
+        chart_path = 'img\chart.png'
+        pixmap = QPixmap(chart_path)
+        if not pixmap.isNull():
+            self.labelChart.setPixmap(pixmap) # 'label'은 카드 창의 QLabel 이름
+            # self.labelChart.setScaledContents(True)  # 이미지 크기 조정
 
         model3 = QStandardItemModel()
         model3.setHorizontalHeaderLabels(["메뉴", "총 판매수"])

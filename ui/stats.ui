@@ -59,9 +59,19 @@
          <property name="title">
           <string>판매 순위</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_8">
+         <layout class="QGridLayout" name="gridLayout_8" columnstretch="2,3">
           <item row="0" column="0">
            <widget class="QTableView" name="tableView_3"/>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="labelChart">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
