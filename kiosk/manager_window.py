@@ -32,7 +32,7 @@ class managerWindow(QMainWindow):
     # 디비 연결
     def get_db_connection(self):
         sid = 'XE'
-        host = 'localhost'
+        host = '210.119.14.76'
         port = 1521
         username = 'kiosk'
         password = '12345'
