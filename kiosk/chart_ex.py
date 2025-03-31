@@ -15,6 +15,8 @@ def img_chart(p_list):
     selected_data = p_list[:5]
 
     labels, values = zip(*selected_data)
+    labels = labels[::-1]
+    values = values[::-1]
 
     plt.figure(figsize=(6,2))
     

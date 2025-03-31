@@ -143,6 +143,7 @@ class managerFunction(QWidget):
             ss += int(s)
         self.labelSum.setText(f'총 매출: {ss:,}원')
 
+        
         self.tableView_1.setModel(model)
 
 
@@ -264,6 +265,7 @@ class managerFunction(QWidget):
             model2.appendRow(items)
 
         self.tableView_2.setModel(model2)
+        self.tableView_2.resizeColumnsToContents()
 
     # 인기 항목 표시
     def load_popular_manu(self):
