@@ -32,7 +32,7 @@ class managerWindow(QMainWindow):
     # 디비 연결
     def get_db_connection(self):
         sid = 'XE'
-        host = 'localhost'
+        host = '210.119.14.76'
         port = 1521
         username = 'kiosk'
         password = '12345'
@@ -98,7 +98,6 @@ class managerWindow(QMainWindow):
     # 조회 버튼 클릭 했을 때
     def check_menu(self):
         category = self.check_category_combobox.currentText()
-
         # 조회버튼 위에 입력된 값 가져오기
         menu_id = self.check_menu_id.text().strip() if self.check_menu_id.text().strip() else None
         menu_name = self.check_menu_name.text().strip() if self.check_menu_name.text().strip() else None
@@ -220,6 +219,7 @@ class managerWindow(QMainWindow):
             print(f"오류 발생: {e}")
             QMessageBox.critical(self, "오류", f"추가 중 오류가 발생했습니다: {e}")
 
+        self.load_menu_data()
 
     # 수정 버튼 클릭 했을 때(상태 페이지에서 값 가져옴)
     def update_menu(self):
@@ -276,6 +276,7 @@ class managerWindow(QMainWindow):
         self.menu_info_input.clear()
         self.menu_price_input.clear()
         self.menu_image_input_name.clear()
+        self.menu_image_input.clear()
 
     def managerFunction(self):
         self.window_5 = managerFunction()
