@@ -236,7 +236,7 @@ class managerWindow(QMainWindow):
 
         try:
             # json에 등록된 기존 메뉴 수정
-            self.update_json(menu_id, menu_name, menu_info, menu_price, category, image_name)
+            self.update_json(menu_id, menu_name, menu_info, menu_price, category)
 
             # 디비 수정
             query = """
