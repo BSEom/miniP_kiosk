@@ -98,14 +98,13 @@ class managerWindow(QMainWindow):
     # 조회 버튼 클릭 했을 때
     def check_menu(self):
         category = self.check_category_combobox.currentText()
-
         # 조회버튼 위에 입력된 값 가져오기
         menu_id = self.check_menu_id.text().strip() if self.check_menu_id.text().strip() else None
         menu_name = self.check_menu_name.text().strip() if self.check_menu_name.text().strip() else None
         menu_price = self.check_menu_price.text().strip() if self.check_menu_price.text().strip() else None
 
         # 필터링된 데이터 로드
-        self.load_menu_data()
+        self.load_menu_data(category, menu_id, menu_name, menu_price)
 
     # 조회페이지에서 더블 클릭 했을 때
     def double_click_event(self):
