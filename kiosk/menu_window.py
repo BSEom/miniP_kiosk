@@ -74,10 +74,10 @@ class menuWindow(QMainWindow, menu_form):
         scroll_widget = self.tabWidget.widget(index).findChild(QWidget, f"scrollAreaWidgetContents_{index+1}")
         layout = scroll_widget.findChild(QGridLayout, f"gridLayout_{index+8}")
 
-        if not layout:
-            print(f"gridLayout_{index+8}")
-            layout = QGridLayout(scroll_widget)
-            scroll_widget.setLayout(layout)
+        # if not layout:
+        #     print(f"gridLayout_{index+8}")
+        #     layout = QGridLayout(scroll_widget)
+        scroll_widget.setLayout(layout)
             
         self.loadMenuData(category, layout)    # 메뉴 조회 
     
