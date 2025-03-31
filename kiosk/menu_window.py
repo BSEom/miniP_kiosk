@@ -48,7 +48,7 @@ class menuWindow(QMainWindow, menu_form):
         # 결제 버튼 클릭 -> 결제 페이지로 이동
         self.pay_btn.clicked.connect(self.paymentWindow)
 
-    # 카테고리 목록을 DB에서 가져와서 탭 동적 생성
+    # 카테고리 목록을 DB에서 가져온 후 탭 생성
     def loadCategories(self):
         conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
         cursor = conn.cursor()
