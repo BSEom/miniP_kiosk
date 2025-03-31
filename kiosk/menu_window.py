@@ -24,8 +24,8 @@ class menuWindow(QMainWindow, menu_form):
         self.initUI()
         self.loadCategories()    # 카테고리 조회
 
-        self.home_btn.clicked.connect(self.close)
-        self.allDel_btn.clicked.connect(self.allDelRow)
+        self.home_btn.clicked.connect(self.close)    # 홈으로
+        self.allDel_btn.clicked.connect(self.allDelRow)    # 전체삭제
         
     def initUI(self):
         self.setWindowTitle('Cafe Kiosk')
