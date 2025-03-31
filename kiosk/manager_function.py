@@ -286,7 +286,7 @@ class managerFunction(QWidget):
             print(f"Fetched {len(rows)} rows from the database.")  # 데이터 확인
 
         print(rows, type(rows), '\n')
-        chart_ex.img_chart(rows)
+        chart_ex.img_chart(rows)  # 차트 생성
 
         chart_path = 'img\chart.png'
         pixmap = QPixmap(chart_path)
