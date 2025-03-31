@@ -291,8 +291,7 @@ class managerFunction(QWidget):
         chart_path = 'img\chart.png'
         pixmap = QPixmap(chart_path)
         if not pixmap.isNull():
-            self.labelChart.setPixmap(pixmap) # 'label'은 카드 창의 QLabel 이름
-            # self.labelChart.setScaledContents(True)  # 이미지 크기 조정
+            self.labelChart.setPixmap(pixmap) 
 
         model3 = QStandardItemModel()
         model3.setHorizontalHeaderLabels(["메뉴", "총 판매수"])
