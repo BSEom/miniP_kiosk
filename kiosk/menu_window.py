@@ -79,7 +79,7 @@ class menuWindow(QMainWindow, menu_form):
             layout = QGridLayout(scroll_widget)
             scroll_widget.setLayout(layout)
             
-        self.loadMenuData(category, layout)    # 메뉴 조회우리 
+        self.loadMenuData(category, layout)    # 메뉴 조회 
     
     # 카테고리별 메뉴를 DB에서 가져와서 버튼 동적 생성
     def loadMenuData(self, category, layout):
