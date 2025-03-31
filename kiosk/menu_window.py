@@ -290,8 +290,8 @@ class menuWindow(QMainWindow, menu_form):
 
             # QMessageBox.information(self, "성공", "주문이 완료되었습니다.")
             # 테이블 초기화(장바구니 비우기)
-            self.allDelRow()
-            self.payment_window = paymentWindow(self)
+#            self.allDelRow()
+            self.payment_window = paymentWindow(total_order_price, parent = self)
             self.payment_window.show()
 
         except Exception as e:
