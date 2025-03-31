@@ -22,10 +22,8 @@ class menuWindow(QMainWindow, menu_form):
         super().__init__()
         self.setupUi(self)
         self.initUI()
-        self.loadCategories()
-        # self.loadMenuData()   # 카테고리 로드한 후에 카테고리별로 실행해야돼서 뺐음
+        self.loadCategories()    # 카테고리 조회
 
-        #self.edit_btn = self.findChild(QPushButton, "edit_btn")
         self.home_btn.clicked.connect(self.close)
         self.allDel_btn.clicked.connect(self.allDelRow)
         
@@ -33,7 +31,7 @@ class menuWindow(QMainWindow, menu_form):
         self.setWindowTitle('Cafe Kiosk')
         self.setWindowIcon(QIcon('img/coffee-cup.png'))
 
-        # 테이블 컬럼명
+        # 장바구니 테이블 컬럼명
         self.cart_tbl.setColumnCount(3)
         self.cart_tbl.setHorizontalHeaderLabels(['메뉴명', '수량', '가격'])
         self.cart_tbl.setRowCount(0)
@@ -69,20 +67,11 @@ class menuWindow(QMainWindow, menu_form):
             category = categories[i]
             self.setCategoryTab(i, category)
             
-    # 카테고리 탭에 적용용
+    # 설계되어있는 탭에 카테고리명을 설정하고 해당 카테고리 메뉴 불러오기
     def setCategoryTab(self, index, category):
-        """
-        기존의 특정 탭(index)에 카테고리명을 설정하고 해당 카테고리 메뉴 불러오기
-        """
-        # 탭 이름 변경
         self.tabWidget.setTabText(index, category)
 
         scroll_widget = self.tabWidget.widget(index).findChild(QWidget, f"scrollAreaWidgetContents_{index+1}")
-
-        # if not scroll_widget:
-        #     print(f"scrollWidgetContents_{index+1} 찾을 수 없음!")
-        #     return  # 에러 방지
-
         layout = scroll_widget.findChild(QGridLayout, f"gridLayout_{index+8}")
 
         if not layout:
@@ -90,7 +79,7 @@ class menuWindow(QMainWindow, menu_form):
             layout = QGridLayout(scroll_widget)
             scroll_widget.setLayout(layout)
             
-        self.loadMenuData(category, layout)
+        self.loadMenuData(category, layout)    # 메뉴 조회우리 
     
     # 카테고리별 메뉴를 DB에서 가져와서 버튼 동적 생성
     def loadMenuData(self, category, layout):
@@ -111,28 +100,17 @@ class menuWindow(QMainWindow, menu_form):
         cursor.close()
         conn.close()
 
-        # 메뉴 테이블 생성
-        # self.menuTable(menu_data, layout)
-        
-        # 이 아래 코드는 일단 지우지말아주세요... -정민
+        # 메뉴 조회
         for i, (menu_id, menu_name, image_filename) in enumerate(menu_data):
             menu_item = self.createMenuWidget(menu_id, image_filename, menu_name)
-            row, col = divmod(i, 3)  # 3열 기준 배치
+            row, col = divmod(i, 3) 
             layout.addWidget(menu_item, row, col)
 
+    # 메뉴 ID, 메뉴 이미지, 메뉴명 불러오기
     def createMenuWidget(self, menu_id, image_filename, text):
         base_dir = os.path.dirname(os.path.abspath(__file__))
         image_folder = os.path.join(base_dir, "../images/")
-
-        # # image_filename이 None인 경우 기본 이미지 설정
-        # if not image_filename:
-        #     print(f"menu_id {menu_id}의 image_filename이 None입니다. 기본 이미지를 사용합니다.")
-        #     image_filename = "default.png"  # 기본 이미지 파일 이름
-
         image_path = os.path.normpath(os.path.join(image_folder, image_filename))
-
-        # 이미지 경로 디버깅
-        # print(f"이미지 경로: {image_path}")
 
         menu_item = QWidget()
         layout = QVBoxLayout(menu_item)
@@ -148,15 +126,6 @@ class menuWindow(QMainWindow, menu_form):
             button.setIconSize(QSize(100, 100))
         else:
             print(f"이미지 로드 실패: {image_path}")
-            # # 기본 이미지를 사용
-            # default_image_path = os.path.normpath(os.path.join(image_folder, "default.png"))
-            # pixmap = QPixmap(default_image_path)
-            # if not pixmap.isNull():
-            #     resized_pixmap = pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            #     button.setIcon(QIcon(resized_pixmap))
-            #     button.setIconSize(QSize(80, 80))
-            # else:
-            #     print(f"기본 이미지도 로드 실패: {default_image_path}")
 
         label = QLabel(text)
         label.setAlignment(Qt.AlignCenter)
@@ -166,9 +135,9 @@ class menuWindow(QMainWindow, menu_form):
         layout.addWidget(button)
         layout.addWidget(label)
 
-        button.clicked.connect(lambda _, mid=menu_id: self.showExpriceWindow(mid))
+        button.clicked.connect(lambda _, mid=menu_id: self.showExpriceWindow(mid))    # 메뉴 클릭시 메뉴 설명창으로 이동
 
-        return menu_item
+        return menu_item    # 불러온 메뉴 조회
 
     def showExpriceWindow(self, menu_id):
         self.window_4 = expriceWindow(menu_id=menu_id, parent=self)  # 부모 창을 전달
