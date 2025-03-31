@@ -105,7 +105,7 @@ class managerWindow(QMainWindow):
         menu_price = self.check_menu_price.text().strip() if self.check_menu_price.text().strip() else None
 
         # 필터링된 데이터 로드
-        self.load_menu_data(category, menu_id, menu_name, menu_price)
+        self.load_menu_data()
 
     # 조회페이지에서 더블 클릭 했을 때
     def double_click_event(self):
@@ -220,6 +220,7 @@ class managerWindow(QMainWindow):
             print(f"오류 발생: {e}")
             QMessageBox.critical(self, "오류", f"추가 중 오류가 발생했습니다: {e}")
 
+        self.load_menu_data()
 
     # 수정 버튼 클릭 했을 때(상태 페이지에서 값 가져옴)
     def update_menu(self):
@@ -276,6 +277,7 @@ class managerWindow(QMainWindow):
         self.menu_info_input.clear()
         self.menu_price_input.clear()
         self.menu_image_input_name.clear()
+        self.menu_image_input.clear()
 
     def managerFunction(self):
         self.window_5 = managerFunction()
