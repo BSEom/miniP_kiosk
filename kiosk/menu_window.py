@@ -48,7 +48,7 @@ class menuWindow(QMainWindow, menu_form):
         # 결제 버튼 클릭 -> 결제 페이지로 이동
         self.pay_btn.clicked.connect(self.paymentWindow)
 
-    # 카테고리 목록을 DB에서 가져와서 탭 동적 생성
+    # 카테고리 목록을 DB에서 가져온 후 탭 생성
     def loadCategories(self):
         conn = oci.connect(f'{username}/{password}@{host}:{port}/{sid}')
         cursor = conn.cursor()
@@ -74,12 +74,12 @@ class menuWindow(QMainWindow, menu_form):
         scroll_widget = self.tabWidget.widget(index).findChild(QWidget, f"scrollAreaWidgetContents_{index+1}")
         layout = scroll_widget.findChild(QGridLayout, f"gridLayout_{index+8}")
 
-        if not layout:
-            print(f"gridLayout_{index+8}")
-            layout = QGridLayout(scroll_widget)
-            scroll_widget.setLayout(layout)
+        # if not layout:
+        #     print(f"gridLayout_{index+8}")
+        #     layout = QGridLayout(scroll_widget)
+        scroll_widget.setLayout(layout)
             
-        self.loadMenuData(category, layout)    # 메뉴 조회우리 
+        self.loadMenuData(category, layout)    # 메뉴 조회 
     
     # 카테고리별 메뉴를 DB에서 가져와서 버튼 동적 생성
     def loadMenuData(self, category, layout):
